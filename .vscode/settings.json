@@ -20,12 +20,29 @@
         "--output-dir=%OUTDIR%",
         "%DOCFILE%"
       ]
-    }
+    },
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    },
   ],
   "latex-workshop.latex.recipes": [
     {
-      "name": "compile",
-      "tools": ["pdflatex", "biber", "pdflatex"]
+      "name": "compile latexmk",
+      "tools": ["latexmk"]
+    },
+    {
+      "name": "compile pdflatex",
+      "tools": ["pdflatex", "biber", "pdflatex", "pdflatex"]
     }
   ]
 }

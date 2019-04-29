@@ -1,11 +1,19 @@
 \chapter{Introduction}
 \label{cha:Introduction}
 
-In this chapter the reader is introduced to the problem and motivation of this master thesis.
+This chapter introduces the reader to the general mindset of the thesis, what it is about and what it tries to achieve.
 
 \section{Problem description and motivation}
 
+With D3 being one of the most powerful data visualization libraries in the JavaScript environment, it is shocking, how bad developer experience can be when writing extensive amounts of D3 code. D3 is a reasonably old library as the development of the library started in early 2011 when the scripting language JavaScript was in a completely different state than it is now. In that era, most developers would have never even thought about utilizing JavaScript as the primary technology to use to realize big enterprise projects. Even tough D3 went through a few significant rewrites and got refactored multiple times; the base API is still quite similar to the original API. This fact is quite noticeable when trying to write a lot of D3 production code that must be kept maintainable for multiple developers.
+
+Since the API might be hard to use in production environments, the idea to combine the D3 library with a widely used JavaScript library called React came to mind. React is currently used in big projects like Facebook, Airbnb, Netflix, or Spotify. The claim that developer experience improves by using D3 through React might be subjective, but there only have to be a few developers that are willing to use React combined with D3 over pure D3. The exciting research aspect then would be, if the combination is possible without losing render performance but still providing the convenience of programming React code.
+
 \section{Goals of the project}
+
+The central research aspect focuses on the performance aspect, not how the combination of React and D3 might be easier to use than pure vanilla D3. Subjective opinions can hardly be measured scientifically as the number of probands would have to be quite high to be able to get accurate heuristic results. Performance numbers, on the other hand, can easily be measured. An implementation of a combination of the two libraries which would allow programmers to use D3 force graph functionality via using React code without introducing any performance penalties would be a valuable software addition to the React community. Methods of how a combination of the technologies can be achieved are elaborated in this paper. Also, some already existing work is explained and analyzed.
+
+Another goal is to introduce the reader to all technologies, that the thesis project utilizes for implementing the thesis project. By reading the following chapters, the conclusion where the paper compares different approaches to solve some problems as mentioned in the introduction should be easy to follow by already having the necessary knowledge to understand all required aspects of the mentioned technologies.
 
 
 
