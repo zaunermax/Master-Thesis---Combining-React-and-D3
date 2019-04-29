@@ -303,3 +303,10 @@
 %% ----------------------------------------------------------------------------
 
 \setlength{\fboxsep}{0mm}			%globally zero fbox separator
+
+\newenvironment{emergency}[1]{%
+  \par
+  \setlength{\emergencystretch}{#1}%
+}{%
+  \par
+}
