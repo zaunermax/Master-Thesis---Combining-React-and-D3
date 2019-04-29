@@ -74,14 +74,152 @@ If there is a user interaction, the simulation sometimes has to be restarted or 
 
 %% add code snippets of pure D3
 
-\section{History of D3}
+%%\section{History of D3}
 
 %%The library was created in late 2010 according to the documentation in \cite{D3}. 
 
 \section{Explaining the D3 API} 
 
-\begin{itemize}
-    \item Talk about chaining and how this is old scool
-    \item Explain problems from chaining
-    \item Explain how chaining might produce very unreadable code when used extensively
-\end{itemize}
+\begin{program}
+\caption{D3 selection, enter, and exit example}
+\label{prog:d3selection}
+\begin{JsCode}
+// earlier in the script
+
+const svg = d3.select('.container')  
+const link = svg.selectAll('path')
+const node = svg.selectAll('.node')
+
+// handling iterations of the simulation
+
+link.exit().remove()
+
+link = link
+  .enter()
+  .append('path')
+  .attr('stroke', '#45b29d')
+  .attr('fill', 'none')
+  .attr('id', ({ source: { name: s }, target: { name: t } }) => s + t)
+  .merge(link)
+
+node
+  .exit()
+  .style('fill', '#b26745')
+  .transition(t)
+  .attr('r', 1e-6)
+  .remove()
+
+node
+  .transition(t)
+  .style('fill', '#3a403d')
+  .attr('r', ({ size }) => size)
+
+node = node
+  .enter()
+  .append('circle')
+  .style('fill', '#45b29d')
+  .attr('r', ({ size }) => size)
+  .attr('id', ({ name }) => name)
+  .merge(node)
+
+simulation.nodes(data)
+\end{JsCode}
+\end{program}
+
+\begin{program}
+\caption{Confusing code example}
+\label{prog:d3confusing}
+\begin{JsCode}
+d3.select(_this).classed('active', true)
+d3.select(_this)
+  .select('.circle')
+  .transition(500)
+  .attr('stroke', function(d) {
+    if (d.rings && d.rings.length > 0) return '#404348'
+    return d.color || COLORS[d.type.toUpperCase()] || '#27292c'
+  })
+  .attr('fill', function(d) {
+    return '#404348'
+  })
+  .style('filter', 'drop-shadow(0 3px 4.7px rgba(0,0,0,.54))')
+d3.select(_this)
+  .selectAll('.ring')
+  .transition(500)
+  .attr('opacity', 1)
+d3.select(_this)
+  .selectAll('.node-background')
+  .transition(500)
+  .attr('opacity', 0)
+d3.select(_this)
+  .selectAll('.sub-circle')
+  .transition(500)
+  .attr('cx', function(d, i) {
+    let deg = ((Math.PI * 2) / 8) * i - Math.PI
+    let x = Math.sin(deg)
+    let offset = event.rings ? event.rings.length * 15 : 0
+    return x * (d.r + 5 + offset)
+  })
+  .attr('cy', (d, i) => {
+    let deg = ((Math.PI * 2) / 8) * i - Math.PI
+    let y = Math.cos(deg)
+    let offset = event.rings ? event.rings.length * 15 : 0
+    return y * (d.r + 5 + offset)
+  })
+  .attr('stroke', '#FFF')
+\end{JsCode}
+\end{program}
+
+Another very important but general aspect of the D3 API is selecting dom nodes. Via the selection D3 can connect JavaScript data to actual DOM nodes. An example can be seen in \ref{prog:d3selection}. Because the library is not declarative, each node that is added or removed is handled via a chained function call as the append function in the example shows very well. When adding or removing multiple dom nodes (in case the individual nodes of the simulation are complicated dom structures) the code quickly gets very incomprehensive. The provided example only appends one simple circle element for instance. 
+
+The code example \ref{prog:d3confusing} is taken from production code and shows how hard to read D3 code can get if multiple DOM changes have to be handled imperatively. Not only the addition of the nodes has to be handled via function calls, but also the addition of some properties like styles of attributes.
+
+D3 also has the concept of entering and exiting selections. As the code in \ref{prog:d3selection} shows, there are the enter, transition, and exit calls, which only select the nodes which will be new in the current simulation step, which nodes are removed and which nodes are transformed. The chained function calls then can handle those selections accordingly. Again, the provided example is a very simple form of a simulation. If the DOM structure would be more complex, handling any selection would produce confusing and unreadable code very quickly.
+
+According to the documentation in \cite{D3Github} the library D3 was created in 2010. Thus it can be noticed, that the libraries API originates from a time, where developers would not even think about using JavaScript in production. Therefore any code written with D3 is not very scaleable. The example \ref{prog:d3forceinit} shows, that the API is written in a very imperative way. Also the library makes use of a pattern called ''chaining''. The pattern works because each function returns an instance of itself so an infinite amount of functions can be added to the chain, making the code more flexible.
+
+\begin{program}
+\caption{Sample initialization of a D3 force graph}
+\label{prog:d3forceinit}
+\begin{JsCode}
+const simulation = forceSimulation(data)
+  .force('charge', forceManyBody().strength(-150))
+  .force('forceX', forceX().strength(0.1))
+  .force('forceY', forceY().strength(0.1))
+  .force('center', forceCenter())
+  .alphaTarget(1)
+  .on('tick', ticked)
+\end{JsCode}
+\end{program}
+
+Over the year better software patterns have emerged as experience showed, that chaining was a software pattern that was new at the time but can produce code that is hard to maintain. Nowadays this library would probably be written with a functional approach, letting developers compose their own simulations. The problem with the example \ref{prog:d3forceinit} is, that the code cannot be reused, as it is hard coded into the chain. 
+
+\begin{program}
+\caption{D3 written in a fictitious functional way}
+\label{prog:d3functional}
+\begin{JsCode}
+const forceParams = compose(
+  force('charge', forceManyBody().strength(-150)),
+  force('forceX', forceX().strength(0.1)),
+  force('forceY', forceY().strength(0.1)),
+  force('center', forceCenter()),
+)
+
+const simulation = forceSimulation(data)
+  forceParams,
+  alphaTarget(1),
+  on('tick', ticked),
+)
+\end{JsCode}
+\end{program}
+
+If a functional approach would be used the code from \ref{prog:d3forceinit} would look more like in example \ref{prog:d3functional}. One might say, that there is not much of a difference, but actually by looking closer, it is clear, that the variable \texttt{forceParams} is a composition of functions, that can be reused multiple times in the application now. Previously the simulation configuration was locked in the function chain which is a problem that can easily produce duplicated code in any codebase.
+
+%\begin{program}
+%\caption{D3 written in a functional way}
+%\label{prog:d3foobar}
+%\begin{JsCode}
+%simulation.foo()
+%\end{JsCode}
+%\end{program}
+%
+%Chaining is not the only problem that might decrease the code quality of a project. The other problem of D3 is, %that handling DOM nodes is not declarative but imperative code as well. 
