@@ -1,71 +1,22 @@
 \chapter{Introduction}
 \label{cha:Introduction}
 
-This chapter introduces the reader to the general concept of the master project. Not only the
-initial situation and motives should be clear after reading this section of the thesis, but also
-what the thesis project is about and what it tries to achieve.
+This chapter introduces the reader to the general concept of the master project. Not only the initial situation and motives should be clear after reading this section of the thesis, but also what the thesis project is about and what it tries to achieve.
 
 \section{Problem description and motivation}
 
-With D3 being one of the most powerful data visualization libraries in the JavaScript environment,
-it is shocking, how bad developer experience can be when writing extensive amounts of D3 code. D3
-is a reasonably old library as the development of the library started in early 2011 when the
-scripting language JavaScript was in a completely different state than it is now. In that era, most
-developers would have never even thought about utilizing JavaScript as the primary technology to
-use to realize big enterprise projects. Even tough D3 went through a few significant rewrites and
-got refactored multiple times; the base API is still quite similar to the original API. This fact
-is quite noticeable when trying to write a lot of D3 production code that must be kept maintainable
-for multiple developers.
+With D3 being one of the most powerful data visualization libraries in the JavaScript environment, it is shocking, how bad developer experience can be when writing extensive amounts of D3 code. D3 is a reasonably old library as the development of the library started in early 2011 when the scripting language JavaScript was in a completely different state than it is now. In that era, most developers would have never even thought about utilizing JavaScript as the primary technology to use to realize big enterprise projects. Even tough D3 went through a few significant rewrites and got refactored multiple times; the base API is still quite similar to the original API. This fact is quite noticeable when trying to write a lot of D3 production code that must be kept maintainable for multiple developers.
 
-Since the API might be hard to use in production environments, the idea to combine the D3 library
-with a widely used JavaScript library called React came to mind. React is currently used in big
-projects like Facebook, Airbnb, Netflix, or Spotify. The claim that developer experience improves
-by using D3 through React might be subjective, but there only have to be a few developers that are
-willing to use React combined with D3 over pure D3. The exciting research aspect then would be, if
-the combination is possible without losing render performance but still providing the convenience
-of programming React code.
+Since the API might be hard to use in production environments, the idea to combine the D3 library with a widely used JavaScript library called React came to mind. React is currently used in big projects like Facebook, Airbnb, Netflix, or Spotify. The claim that developer experience improves by using D3 through React might be subjective, but there only have to be a few developers that are willing to use React combined with D3 over pure D3. The exciting research aspect then would be, if the combination is possible without losing render performance but still providing the convenience of programming React code.
 
 \section{Goals of the project}
 
-The central research aspect focuses on the performance aspect, not how the combination of React and
-D3 might be easier to use than pure vanilla D3. Subjective opinions can hardly be measured
-scientifically as the number of probands would have to be quite high to be able to get accurate
-heuristic results. Performance numbers, on the other hand, can easily be measured. An
-implementation of a combination of the two libraries which would allow programmers to use D3 force
-graph functionality via using React code without introducing any performance penalties would be a
-valuable software addition to the React community. Methods of how a combination of the technologies
-can be achieved are elaborated in this paper. Also, some already existing work is explained and
-analyzed.
+The central research aspect focuses on the performance aspect, not how the combination of React and D3 might be easier to use than pure vanilla D3. Subjective opinions can hardly be measured scientifically as the number of probands would have to be quite high to be able to get accurate heuristic results. Performance numbers, on the other hand, can easily be measured. An implementation of a combination of the two libraries which would allow programmers to use D3 force graph functionality via using React code without introducing any performance penalties would be a valuable software addition to the React community. Methods of how a combination of the technologies can be achieved are elaborated in this paper. Also, some already existing work is explained and analyzed.
 
-The thesis aims to introduce the reader to the general concept of the two libraries -- React and D3
--- which are combined in the thesis project. The paper also provides a general overview and
-introduction to the two libraries for an even better understanding of the thesis project. All
-required knowledge should be able to be acquired throughout the first chapters to then being able
-to understand the performance discussions in the later chapters. Following chapters often compare
-different approaches to solve some software related problems and solutions for combining the
-libraries. It is then easy to follow the discussion by already having the necessary knowledge to
-understand all required aspects of the mentioned technologies.
+The thesis aims to introduce the reader to the general concept of the two libraries -- React and D3 -- which are combined in the thesis project. The paper also provides a general overview and introduction to the two libraries for an even better understanding of the thesis project. All required knowledge should be able to be acquired throughout the first chapters to then being able to understand the performance discussions in the later chapters. Following chapters often compare different approaches to solve some software related problems and solutions for combining the libraries. It is then easy to follow the discussion by already having the necessary knowledge to understand all required aspects of the mentioned technologies.
 
-Another significant part of the thesis is the description of the thesis project. The combination of
-the libraries React and D3 is a project that was created out of a requirement. The goals of the
-project are to create a system, that lets developers write React code but use D3 functionality.
-Also, another goal is to keep performance losses at a minimum but still use React's declarative way
-of writing components to its full extent.  Of course, there are many ways to achieve the same goal;
-that's also why the thesis project provides 3 discussable prototypes. The following chapters
-explain the implementation and functionality of each prototype. Ultimately, all prototypes are
-compared to each other.
+Another significant part of the thesis is the description of the thesis project. The combination of the libraries React and D3 is a project that was created out of a requirement. The goals of the project are to create a system, that lets developers write React code but use D3 functionality. Also, another goal is to keep performance losses at a minimum but still use React's declarative way of writing components to its full extent.  Of course, there are many ways to achieve the same goal; that's also why the thesis project provides 3 discussable prototypes. The following chapters explain the implementation and functionality of each prototype. Ultimately, all prototypes are compared to each other.
 
-The performance comparison of the prototypes is one of the most exciting parts of the thesis. Each
-prototype is tested on different devices on different browsers which generate some performance
-numbers that are also compared and discussed. While discussing raw performance numbers can give an
-insight into how the prototypes perform, they can also be essential to measure user experience. A
-vital part of the thesis is the explanation of user perception of animated content in the browser.
-The focus primarily lies on researching the threshold on which users percept an animation as not
-smooth anymore.
+The performance comparison of the prototypes is one of the most exciting parts of the thesis. Each prototype is tested on different devices on different browsers which generate some performance numbers that are also compared and discussed. While discussing raw performance numbers can give an insight into how the prototypes perform, they can also be essential to measure user experience. A vital part of the thesis is the explanation of user perception of animated content in the browser. The focus primarily lies on researching the threshold on which users percept an animation as not smooth anymore.
 
-Ultimately there is the goal of introducing the reader to the open source concept that is planned
-for the thesis project. Initially, a specific use-case was the reason to create the library that
-connects D3 and React, but there are most certainly other developers that can make use of the
-thesis project as well. The paper provides a general overview of how the public API of the
-technology is designed and how the project will be published on the npm package registry to being
-able to include the library in any project.
+Ultimately there is the goal of introducing the reader to the open source concept that is planned for the thesis project. Initially, a specific use-case was the reason to create the library that connects D3 and React, but there are most certainly other developers that can make use of the thesis project as well. The paper provides a general overview of how the public API of the technology is designed and how the project will be published on the npm package registry to being able to include the library in any project.
