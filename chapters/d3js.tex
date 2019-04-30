@@ -1,7 +1,7 @@
 \chapter{D3.js – Data-Driven Documents}
 \label{cha:d3js}
 
-Chapter \ref{cha:d3js} provides an overview of the popular JavaScript library D3 which is used to simplify implementations of any data visualizations in the web for developers. The chapter provides an overview of the libraries beginnings but also goes into detail about how to implement projects with D3. The knowledge is required to understand the performance comparisons in chapter \ref{chap:performance} and \ref{chap:conclusion}.
+Chapter \ref{cha:d3js} provides an overview of the popular JavaScript library D3 which is used to simplify implementations of any data visualizations in the web for developers. It provides an overview of the libraries beginnings but also goes into detail about how to implement projects with D3. The knowledge is required to understand the performance comparisons in chapter \ref{chap:performance} and \ref{chap:conclusion}.
 
 \begin{figure}
     \centering
@@ -12,7 +12,7 @@ Chapter \ref{cha:d3js} provides an overview of the popular JavaScript library D3
 
 \section{Introduction to D3}
 
-D3 is a JavaScript library that helps developers create highly sophisticated data visualizations on the web via a universal tool that is platform agnostic: the browser. The official documentation of D3 in \cite[Introduction]{D3Website} explains the library as a toolkit, that allows binding data to the DOM. Also, it gives an overview of the vast amount of helpful tools that can be used to visualize data. The library includes all kinds of functionality, ranging from picking color ranges, choosing animation springs, randomizing numbers to rendering simple bar charts or calculating treemaps or real-time rendered force simulations.
+D3 is a JavaScript library that helps developers create highly sophisticated data visualizations on the web via a universal tool that is platform agnostic: the browser. The official documentation of D3 in \cite[Introduction]{D3Website} explains the library as a toolkit, that allows binding data to the DOM. Also, it gives an overview of the vast amount of helpful tools that can be used to visualize data. The library includes all kinds of functionality, ranging from picking color ranges, choosing animation springs, randomizing numbers to rendering simple bar charts or calculating treemaps or real-time rendered force simulations. The library offers all said functionality by exposing it via a rather easy to understand and well documented API which makes it easy for developers to create their own data visualizations in the browser.
 
 \begin{figure}
   \centering
@@ -38,14 +38,14 @@ This paper focuses on a special graph type which is called ''force simulation''.
 
 As previously mentioned, all force simulations are calculated, animated, and rendered in the browser which also includes user interaction. The user can for example drag nodes around which of course then affects other nodes and the whole simulation. Figure \ref{fig:force003} shows well, how dragging one node affects the whole force graph, as all connected nodes follow the dragged node while still rejecting each other and while being attracted to the center force.
 
-D3 provides a somewhat simplified API to be able to quickly implement force graphs in the browser as it can be read in \cite[/d3-force/blob/master/README.md]{D3Github}. The way force simulations work is that developers first have to define or build the simulation. There is a factory method as seen in \hyperref[prog:simulation]{line 1} which takes the nodes of the graph as an argument and builds a default simulation. The nodes have to be provided in a particular scheme so D3 can correctly parse the node array. 
-
 \begin{figure}
   \centering
   \includegraphics[width=0.45\columnwidth]{forceOwn003.PNG}
   \caption{A sample force graph with one center force. The nodes are configured to reject each other with the function \texttt{r+r/2}}
   \label{fig:force004}
 \end{figure}
+
+D3 provides a somewhat simplified API to be able to quickly implement force graphs in the browser as it can be read in \cite[/d3-force/blob/master/README.md]{D3Github}. The way force simulations work is that developers first have to define or build the simulation. There is a factory method as seen in \hyperref[prog:simulation]{line 1} which takes the nodes of the graph as an argument and builds a default simulation. The nodes have to be provided in a particular scheme so D3 can correctly parse the node array. 
 
 \begin{program}
 \caption{Code snippets for D3 force simulation code}
@@ -169,13 +169,9 @@ d3.select(_this)
 \end{JsCode}
 \end{program}
 
-Another very important but general aspect of the D3 API is selecting dom nodes. Via the selection D3 can connect JavaScript data to actual DOM nodes. An example can be seen in \ref{prog:d3selection}. Because the library is not declarative, each node that is added or removed is handled via a chained function call as the append function in the example shows very well. When adding or removing multiple dom nodes (in case the individual nodes of the simulation are complicated dom structures) the code quickly gets very incomprehensive. The provided example only appends one simple circle element for instance. 
+Another vital aspect of the D3 API is selecting dom nodes. Via the selection D3 can connect JavaScript application data to actual DOM nodes. An example can be seen in \ref{prog:d3selection}. Because the library is not declarative, each node that is added or removed is handled via a chained function call as the append function in  \ref{prog:d3selection} shows very well. When adding or removing multiple dom nodes (in case the individual nodes of the simulation are complicated dom structures), the code quickly gets very incomprehensive. The provided example only appends one simple circle element for instance. 
 
-The code example \ref{prog:d3confusing} is taken from production code and shows how hard to read D3 code can get if multiple DOM changes have to be handled imperatively. Not only the addition of the nodes has to be handled via function calls, but also the addition of some properties like styles of attributes.
-
-D3 also has the concept of entering and exiting selections. As the code in \ref{prog:d3selection} shows, there are the enter, transition, and exit calls, which only select the nodes which will be new in the current simulation step, which nodes are removed and which nodes are transformed. The chained function calls then can handle those selections accordingly. Again, the provided example is a very simple form of a simulation. If the DOM structure would be more complex, handling any selection would produce confusing and unreadable code very quickly.
-
-According to the documentation in \cite{D3Github} the library D3 was created in 2010. Thus it can be noticed, that the libraries API originates from a time, where developers would not even think about using JavaScript in production. Therefore any code written with D3 is not very scaleable. The example \ref{prog:d3forceinit} shows, that the API is written in a very imperative way. Also the library makes use of a pattern called ''chaining''. The pattern works because each function returns an instance of itself so an infinite amount of functions can be added to the chain, making the code more flexible.
+The code example \ref{prog:d3confusing} is taken from production code and shows how hard to read D3 code can get if multiple DOM changes have to be handled imperatively. Not only the addition of the nodes has to be handled via function calls, but also some general node properties like CSS styles or custom attributes.
 
 \begin{program}
 \caption{Sample initialization of a D3 force graph}
@@ -191,7 +187,12 @@ const simulation = forceSimulation(data)
 \end{JsCode}
 \end{program}
 
-Over the year better software patterns have emerged as experience showed, that chaining was a software pattern that was new at the time but can produce code that is hard to maintain. Nowadays this library would probably be written with a functional approach, letting developers compose their own simulations. The problem with the example \ref{prog:d3forceinit} is, that the code cannot be reused, as it is hard coded into the chain. 
+%% TODO: not perfect
+D3 also has the concept of entering and exiting selections. As the code in \ref{prog:d3selection} shows, there are the enter, transition, and exit calls, which only select the nodes which will be new in the current simulation step, which nodes are removed and which nodes are transformed. The chained function calls then can handle those selections accordingly. Again, the provided example is a straightforward form of a simulation. If the DOM structure would be more complex, handling any selection would produce confusing and unreadable code very quickly.
+
+According to the documentation in \cite{D3Github} the library D3 was created in 2010. Thus it can be noticed, that the libraries API originates from a time, where developers would not even think about using JavaScript in production. Therefore any code written with D3 is not very scalable. The example \ref{prog:d3forceinit} shows, that the API is written in a very imperative way. Also, the library makes use of a pattern called ''chaining''. The pattern works because each function returns an instance of itself so an infinite amount of functions can be added to the chain, making the code more flexible.
+
+Over the years better software patterns emerged as experience had shown, that chaining is a software pattern that was new at the time but can cause code that is hard to maintain. Nowadays this library would probably be written with a functional approach, letting developers compose their simulations via functional composition as various libraries and frameworks on the internet already do. The problem with the example \ref{prog:d3forceinit} is that the code cannot be reused, as it is hardcoded into the chain. Nowadays many frameworks for building frontend applications use a declarative approach for binding the view to the data model. D3 still uses an imperative software pattern which forces developers to chain multiple library functions to control multiple elements in the dom.
 
 \begin{program}
 \caption{D3 written in a fictitious functional way}
@@ -212,7 +213,7 @@ const simulation = forceSimulation(data)
 \end{JsCode}
 \end{program}
 
-If a functional approach would be used the code from \ref{prog:d3forceinit} would look more like in example \ref{prog:d3functional}. One might say, that there is not much of a difference, but actually by looking closer, it is clear, that the variable \texttt{forceParams} is a composition of functions, that can be reused multiple times in the application now. Previously the simulation configuration was locked in the function chain which is a problem that can easily produce duplicated code in any codebase.
+If a functional approach would be used the code from \ref{prog:d3forceinit} would look more like in example \ref{prog:d3functional}. The difference between the two code examples in \ref{prog:d3forceinit} and \ref{prog:d3functional} might appear to be very subtle, but in reality, it is very significant. By looking closer, it is clear, that the variable \texttt{forceParams} is a functional composition of methods, that can be reused multiple times in the application. In the first example in \ref{prog:d3forceinit} the simulation configuration is locked in the function chain. Chaining is a pattern which can easily cause duplicated code in any codebase.
 
 %\begin{program}
 %\caption{D3 written in a functional way}
