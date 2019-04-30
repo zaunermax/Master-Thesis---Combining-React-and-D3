@@ -1,3 +1,10 @@
 {
   "latex-workshop.latex.outDir": "build",
+  "latex-workshop.latexindent.args":[
+    "-c",
+    "%DIR%/",
+    "%TMPFILE%",
+    "-y=defaultIndent: '%INDENT%'",
+    "-m"
+  ]
 }
