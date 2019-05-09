@@ -6,13 +6,5 @@
     "%TMPFILE%",
     "-y=defaultIndent: '%INDENT%'",
     "-m"
-  ],
-  "spellright.language": [
-    "en"
-  ],
-  "spellright.documentTypes": [
-    "markdown",
-    "latex",
-    "plaintext"
   ]
 }
