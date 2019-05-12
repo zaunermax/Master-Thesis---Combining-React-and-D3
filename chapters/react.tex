@@ -4,6 +4,7 @@
 This chapter introduces the reader to the very popular and widespread front end library called ReactJS. It explains an essential part of React -- its rendering cycle -- which the reader needs to understand at least on a high level to be able to follow upcoming explanations of how the thesis project was implemented. Additionally, the paper elaborates the difference of how React uses declarative code to render data, whereas D3 uses an imperative API to render its data.
 
 \section{Introduction to ReactJS}
+\label{sec:reactIntro}
 
 The easiest way to find information about React is to visit its official website \footnote{https://reactjs.org}. There is a statement in \cite{React} up front that says: \begin{quote}\begin{english}React is a JavaScript library for building user interfaces.\end{english}\end{quote} which describes React very well. A Facebook engineer called Jordan Walke founded the library in 2011 as presented in \cite[05:30]{ReactFoundingVideo}. Walke wanted to create a tool that would improve the code quality of their internal tool called ''Facebook ads''. Up until then, Facebook continued to develop and use React internally, but since the year 2013, the project is entirely open source. Since the initial open-source release up until now, not only technical engineers of Facebook but also the React open source community itself have been maintaining the library. In late 2017 Facebook even changed React's BSD license to the MIT license, which is even better for the React community, as the MIT license has lesser restrictions than the BSD license.
 
@@ -56,8 +57,6 @@ const ReactElement = React.createElement(
 \end{JsCode}
 \end{program}
 
-% Notice, that the class property has to be \texttt{className} instead of \texttt{class} as JSX is \emph{not} HTML, but extended JavaScript.
-
 Probably one of the most important aspects of React's API is the JavaScript language extension called ''JSX'' which simplifies the use of React greatly and produces much more readable code. The example in \ref{prog:reactJsxElement} shows an example React component that is written in JSX. When looking at the transpiled output in \ref{prog:reactJsxTranspiled} it is clear how JSX helps to reduce the amount of code and how it greatly improves readablity. The code in \ref{prog:reactJsxTranspiled} also shows that React is just a big composition of \texttt{React.createElement([element])} calls under the hood. When writing JSX code, in reality it is writing declarative code that is just a functional composition of React components. 
 
 Notice, how the createElement function takes up to 3 parameters as documented in \cite[/docs/react-api.html]{React}. The first parameter being the element type (the type can also be a custom user created component or a downloaded third party component), the second parameter being the element's properties and the third parameter being the component's children. In fact, that third parameter makes it possible to compose multiple React components together, as children are nestable. 
@@ -68,6 +67,10 @@ Because JSX is a language extension, a transpilation step is needed in order to 
 
 \subsection{Explaining React components}
 \label{sec:reactComponents}
+
+React's components can basically be split up in two categories: stateful and stateless components. The following paragraphs explain the difference between the two types of components and how they can be used in a React application.
+
+\subsubsection{Functional stateless components}
 
 \begin{program}
 \caption{Simple example of a React component and its usage} 
@@ -101,12 +104,15 @@ const App = () => {
     </PageComponent>
   );
 };
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);  
 \end{JsCode}
 \end{program}
 
-As mentioned before, React is a highly component oriented web technology. The example code in \ref{prog:reactHelloWorld} includes a sample presentational component called ''HelloComponent'' on line 1, a page layout component on line 6 and the base App component on line 17. The app renders the page layout coponent, passes a few props and then renders the HelloComponent twice inside the layout component. One time the HelloComponent receives the prop \texttt{name} and one time the property is omitted. The output of the hello world example can be seen in figure \ref{fig:reactHelloWorld}. The example in \ref{prog:reactHelloWorld} visualizes, how components can be reused throughout the application with different configurations and in different arrangements. The page layout component could be declared in its own file to be reused in every page of the app. Via props React provides a solid mechanism to control static state of the components that receive the props. 
+As mentioned before, React is a highly component oriented web technology. The example code in \ref{prog:reactHelloWorld} includes a purely presentational component called ''HelloComponent'' on line 1, a page layout component called ''PageComponent'' on line 6, and the base App component called ''App'' on line 17. React enables developers to create reusable and configurable components by providing the possibility to pass an arbitrary number props to components. Generally speaking, props are used to not only control presentational details like color or layout variations, but also to configure some initial state for example or to pass some application state data to a textbox component for example.
 
-It is of utmost importance to understand, that props -- once they're passed to a component -- are static and immutable inside the receiving component. Components that render props can be seen as pure functions that only render the props that they receive each render cycle. The props could thus be understood as the parameters of the pure functions.
+Without going too deep into the details of how a React application is rendered, lines 30 and 31 in \ref{prog:reactHelloWorld} show, how the app component is rendered into a specific entry point in the static \texttt{index.html} page. The app component on line 17 renders the page layout coponent, passes a few props which should demonstrate what types of props are possible and then renders the \texttt{HelloComponent} twice inside the layout component. One time the \texttt{HelloComponent} receives the prop \texttt{name} and one time the property is omitted. The output of the hello world example can be seen in figure \ref{fig:reactHelloWorld}. 
 
 \begin{figure}
   \centering
@@ -115,10 +121,33 @@ It is of utmost importance to understand, that props -- once they're passed to a
   \label{fig:reactHelloWorld}
 \end{figure}
 
+The example in \ref{prog:reactHelloWorld} visualizes, how components can be reused throughout the application with different configurations and in different arrangements. The page layout component could be declared in its own file to be reused in every page of the app. Via props React provides a solid mechanism to control static state of the components that receive the props.
+
+It is of utmost importance to understand, that props -- once they're passed to a component -- are static and immutable inside the receiving component. Components that only render props and don't hold their own application state can be seen as pure functions which render the exact data they receive every render cycle. Props could thus be understood as parameters of a pure function, leading us back to the previously explained context of the function \texttt{f(data) = UI} in \ref{sec:reactIntro}. Another important aspect of React's prop mechanism is, that props cannot be changed inside the receiving component. Props that are passed into a component are immutable and trying to mutate them will result in React not noticing any changes in the data and therefore not activating a new render cycle.
+
+\subsubsection{Stateful components}
+
+The attentive reader now probably has the following question: ''How to I introduce mutable application state, if data coming from props is immutable?'' React provides a mechanism for handling mutable application state as well. The code example in \ref{prog:reactStatefulComponent} clearly shows the difference beween a purely presentational component on line 1 and a stateful component that keeps track of its own application state on line 8. 
+
+Creating stateful components is very easy, as the component class just has to derive from \texttt{React.Component}. The constructor in line 12 of \ref{prog:reactStatefulComponent} calls its super construcor -- \texttt{React.Component} in that case -- and then initializes its own state to \texttt{\{count: 1\}}. The state object is available throughout the whole class component and can be used to render UI components, that depend on that state.
+
+Stateful components consist of a set of lifecycle methods that are called every render cycle of React which is different to stateless functional components, as they are just pure functions. React's lifecycle methods -- some of which can be found on lines 19, 23, 27, 31, and 39 in \ref{prog:reactStatefulComponent} -- make it possible to exactly control how components react to certain application state updates. Their names make it pretty clear what they will handle. 
+
+A comprehensive guide on component lifecycle methods can be found in React's documentation in \cite[/docs/react-component.html]{React}. By overwriting the lifecycle methods, developers can add their own specific logic to each lifecycle of the component. It is also possible to completely omit overwrting any lifecycle method. Notice, how stateful class components have to overwrite the \texttt{render()} function to being able to actually render content. The render function is called every time the component goes trough a new render cycle.
+
+The lifecycle method on line 23 in \ref{prog:reactStatefulComponent} is also very important, as it controls, if the component should even go through it's rendering cycle or not. As mentioned before, React advises to avoid reconciliation where ever possible. The \texttt{shouldComponentUpdate} lifecycle method allows the developer to avoid unnecessary render and reconciliation cycles by directly preventing a render cycle. The \texttt{shouldComponentUpdate} method gets passed all new props and state which can be compared to previous data. The example in \ref{prog:reactStatefulComponent} shows, that the count from the current and the next state is compared and if they differ, \texttt{true} is returned, which means to React that a new render cycle is necessary. If for example the \texttt{App} component on line 49 would render the \texttt{StatefulComponent} 100 times, the stateful component is smart enough to only run though its lifecyle methods only once, as \texttt{shouldComponentUpdate} method tells the component that nothing has changed and therefore omitting the rest of the lifecycle methods. Not calling the render function and its \texttt{createElement()} methods under the hood also means, that no reconciliation has to be performed for the stateful component neither, resulting in improved render performance of the app.
+
+% reconciliation?
+
+% components do not have to have state for lifecycle components to work
+
 \begin{program}
 \caption{Simple example of a React component and its usage} 
 \label{prog:reactStatefulComponent}
 \begin{JsCode}
+import React from "react";
+import ReactDOM from "react-dom";
+
 const Count = props => (
   <div>
     <div>I render the count</div>
@@ -127,9 +156,28 @@ const Count = props => (
 );
 
 class StatefulComponent extends React.Component {
-  state = {
-    count: 1
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 1
+    };
+  }
+
+  componentDidMount() {
+    console.log("I did mount.");
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.count !== nextState.count;
+  }
+
+  componentDidUpdate(prevProps) {
+    console.log("I did uptate, previous props are", prevProps);
+  }
+
+  componentWillUnmount() {
+    console.log("I am about to vanish...");
+  }
 
   counterHandler = () => {
     this.setState(state => ({ count: state.count + 1 }));
@@ -146,6 +194,9 @@ class StatefulComponent extends React.Component {
 }
 
 const App = () => <StatefulComponent />;
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);  
 \end{JsCode}
 \end{program}
 
@@ -162,6 +213,8 @@ const App = () => <StatefulComponent />;
 
 % talk about animating stuff in react
 
-\section{The difference between imperative and declarative APIs}
+% maybe introduce stateful functional components
+
+% \section{The difference between imperative and declarative APIs}
 
 
