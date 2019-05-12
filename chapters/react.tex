@@ -22,7 +22,7 @@ Unidirectional data-flow implicitly means to React, that there is no data bindin
 \section{Explaining the React API}
 \label{sec:reactApi}
 
-To follow performance discussions and elaborations about the thesis project's prototypes, a generally high-level understanding of the API is required. This section introduces the reader to React's public API. The section does not aim to be a tutorial on how to program React applications, but rather a high-level explanation of how the API works. Reading this section makes it easy to understand the differences and similarities of React and D3 and how the two libraries play together and how they're also completely different.
+To follow performance discussions and elaborations about the thesis project's prototypes, a general high-level understanding of the API is required. This section introduces the reader to React's public API. The section does not aim to be a tutorial on how to program React applications, but rather to be a high-level explanation of how the API works. Reading this section makes it easy to understand the differences and similarities of React and D3 and how the two libraries play together and how they're also completely different.
 
 \subsection{JSX in general}
 
@@ -32,7 +32,7 @@ To follow performance discussions and elaborations about the thesis project's pr
 \begin{JsCode}
 const ReactElement = (
   <div className="hello-world">
-    Hello <span className="important">World</span>!
+    Hello <span className="emph-text">World</span>!
   </div>
 )
 \end{JsCode}
@@ -42,13 +42,13 @@ const ReactElement = (
 \caption{Creating a React element without JSX} 
 \label{prog:reactJsxTranspiled}
 \begin{JsCode}
-var ReactElement = React.createElement(
+const ReactElement = React.createElement(
   "div", 
   { className: "hello-world" }, 
   "Hello ", 
   React.createElement(
     "span", 
-    { className: "important" }, 
+    { className: "emph-text" }, 
     "World"
   ), 
   "!"
@@ -56,11 +56,15 @@ var ReactElement = React.createElement(
 \end{JsCode}
 \end{program}
 
-Probably one of the most important aspects of React's API is the JavaScript language extension called ''JSX'' which simplifies the use of React greatly and produces much more readable code. The example in \ref{prog:reactJsxElement} shows an example React component that is written in JSX. Notice, that the class property has to be \texttt{className} instead of \texttt{class} as JSX is \emph{not} HTML, but extended JavaScript.
+% Notice, that the class property has to be \texttt{className} instead of \texttt{class} as JSX is \emph{not} HTML, but extended JavaScript.
 
-When looking at the transpiled output in \ref{prog:reactJsxTranspiled} it is clear how JSX helps to reduce the amount of code and how it greatly improves readablity. The code in \ref{prog:reactJsxTranspiled} also shows that React is just a big composition of \texttt{React.createElement([element])} calls under the hood. When writing JSX code, in reality it is writing declarative code that is just a functional composition of React components. Notice, how the createElement function takes up to 3 parameters as documented in \cite[/docs/react-api.html]{React}. The first parameter being the element type (the type can also be a custom user or third party component), the second parameter being the element's properties and the third parameter being the compoennt's children. The third parameter is the one which makes it possible to compose many React components together.
+Probably one of the most important aspects of React's API is the JavaScript language extension called ''JSX'' which simplifies the use of React greatly and produces much more readable code. The example in \ref{prog:reactJsxElement} shows an example React component that is written in JSX. When looking at the transpiled output in \ref{prog:reactJsxTranspiled} it is clear how JSX helps to reduce the amount of code and how it greatly improves readablity. The code in \ref{prog:reactJsxTranspiled} also shows that React is just a big composition of \texttt{React.createElement([element])} calls under the hood. When writing JSX code, in reality it is writing declarative code that is just a functional composition of React components. 
 
-Because JSX is a language extension, a transpile step is needed in order to produce production code. The common tool to use is called ''Babel''. There is a caption in \cite{Babel} that says: \begin{quote}\begin{english}Use next generation JavaScript today.\end{english}\end{quote} The documentation in \cite[/docs/en]{Babel} explains, how modern JavaScript features can be used in any JavaScript project. The code which includes those modern features is normalized and transpiled by Babel to also work in older browsers. The tool accomplishes this by transforming the JavaScript code via its core implementation but also via some third party plugins. A babel plugin has been created to transform JSX components into the syntax that can be seen in the code in \ref{prog:reactJsxTranspiled}. Just as a sidenote, altough JSX became popular in conjunction with React, there are also other web technologies that make use of JSX like Vue.js \footnote{https://vuejs.org/} for example.
+Notice, how the createElement function takes up to 3 parameters as documented in \cite[/docs/react-api.html]{React}. The first parameter being the element type (the type can also be a custom user created component or a downloaded third party component), the second parameter being the element's properties and the third parameter being the component's children. In fact, that third parameter makes it possible to compose multiple React components together, as children are nestable. 
+
+Line 2 and 3 in \ref{prog:reactJsxTranspiled} show, how a React element is created. A node of type \texttt{''div''} is created and the property \texttt{\{className: ''helo-world''\}} is passed. Each parameter after Line 3 is a child of the created \texttt{<div>} node. The React element has 3 children which is demonstrated by the code example where the element is written in JSX in \ref{prog:reactJsxElement}. First, there is the string ''Hello '', then there is a \texttt{<span>} which also has children, and finally there is the exclamation mark string at the end. When going back to the transpiled code example in \ref{prog:reactJsxTranspiled}, lines 4 to 10 exactly show what kind of children are passed to React's element creating function. Notice, that the class property has to be ''className'' in JSX instead of ''class'' because JSX is \emph{not} HTML, but extended JavaScript. Something also worth looking at is line 5 in \ref{prog:reactJsxTranspiled}. A nested \texttt{createElement()} call shows, how components can be composed together.
+
+Because JSX is a language extension, a transpilation step is needed in order to produce production code. The common tool to use is called ''Babel''. There is a caption in \cite{Babel} that says: \begin{quote}\begin{english}Use next generation JavaScript today.\end{english}\end{quote} The documentation in \cite[/docs/en]{Babel} explains, how modern JavaScript features can be used in any JavaScript project. The code which includes those modern features is normalized and transpiled by Babel to also work in older browsers. The tool accomplishes this by transforming the JavaScript code via its core implementation but also via some third party plugins. A babel plugin has been created to transform JSX components into the syntax that can be seen in the code in \ref{prog:reactJsxTranspiled}. Just as a sidenote, altough JSX became popular in conjunction with React, there are also other web technologies that make use of JSX like Vue.js \footnote{https://vuejs.org/} for example.
 
 \subsection{Explaining React components}
 \label{sec:reactComponents}
@@ -155,6 +159,8 @@ const App = () => <StatefulComponent />;
 % what is state for the one component is immutable static prop for the other
 
 %Another important aspect of React which is important for this project are its life cycle methods. Each component has a life cycle that will be executed on each rendering cycle. Developers can hook into those life cycle methods to implement some logic that should be executed after a component mounts or after a component was updated for example. The most well known life cycle methods of React are \texttt{componentDidMount()} or \texttt{componentDidUpdate()}.
+
+% talk about animating stuff in react
 
 \section{The difference between imperative and declarative APIs}
 
