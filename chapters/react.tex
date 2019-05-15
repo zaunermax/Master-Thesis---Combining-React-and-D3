@@ -76,6 +76,9 @@ React's components can basically be split up in two categories: stateful and sta
 \caption{Simple example of a React component and its usage} 
 \label{prog:reactHelloWorld}
 \begin{JsCode}
+import React from "react";
+import ReactDOM from "react-dom";
+
 const HelloComponent = props => {
   const name = props.name;
   return <div>Hello World to {name ? name : "you"}!</div>;
@@ -110,9 +113,9 @@ ReactDOM.render(<App />, rootElement);
 \end{JsCode}
 \end{program}
 
-As mentioned before, React is a highly component oriented web technology. The example code in \ref{prog:reactHelloWorld} includes a purely presentational component called ''HelloComponent'' on line 1, a page layout component called ''PageComponent'' on line 6, and the base App component called ''App'' on line 17. React enables developers to create reusable and configurable components by providing the possibility to pass an arbitrary number props to components. Generally speaking, props are used to not only control presentational details like color or layout variations, but also to configure some initial state for example or to pass some application state data to a textbox component for example.
+As mentioned before, React is a highly component oriented web technology. The example code in \ref{prog:reactHelloWorld} includes a purely presentational component called ''HelloComponent'' on line 4, a page layout component called ''PageComponent'' on line 9, and the base App component called ''App'' on line 20. React enables developers to create reusable and configurable components by providing the possibility to pass an arbitrary number props to components. Generally speaking, props are used to not only control presentational details like color or layout variations, but also to configure some initial state for example or to pass some application state data to a textbox component for example.
 
-Without going too deep into the details of how a React application is rendered, lines 30 and 31 in \ref{prog:reactHelloWorld} show, how the app component is rendered into a specific entry point in the static \texttt{index.html} page. The app component on line 17 renders the page layout coponent, passes a few props which should demonstrate what types of props are possible and then renders the \texttt{HelloComponent} twice inside the layout component. One time the \texttt{HelloComponent} receives the prop \texttt{name} and one time the property is omitted. The output of the hello world example can be seen in figure \ref{fig:reactHelloWorld}. 
+Without going too deep into the details of how a React application is rendered, lines 33 and 34 in \ref{prog:reactHelloWorld} show, how the app component is rendered into a specific entry point in the static \texttt{index.html} page. The app component on line 20 renders the page layout coponent, passes a few props which should demonstrate what types of props are possible and then renders the \texttt{HelloComponent} twice inside the layout component. One time the \texttt{HelloComponent} receives the prop \texttt{name} and one time the property is omitted. The output of the hello world example can be seen in figure \ref{fig:reactHelloWorld}. 
 
 \begin{figure}
   \centering
@@ -123,27 +126,76 @@ Without going too deep into the details of how a React application is rendered, 
 
 The example in \ref{prog:reactHelloWorld} visualizes, how components can be reused throughout the application with different configurations and in different arrangements. The page layout component could be declared in its own file to be reused in every page of the app. Via props React provides a solid mechanism to control static state of the components that receive the props.
 
-It is of utmost importance to understand, that props -- once they're passed to a component -- are static and immutable inside the receiving component. Components that only render props and don't hold their own application state can be seen as pure functions which render the exact data they receive every render cycle. Props could thus be understood as parameters of a pure function, leading us back to the previously explained context of the function \texttt{f(data) = UI} in \ref{sec:reactIntro}. Another important aspect of React's prop mechanism is, that props cannot be changed inside the receiving component. Props that are passed into a component are immutable and trying to mutate them will result in React not noticing any changes in the data and therefore not activating a new render cycle.
+It is of utmost importance to understand, that props -- once they're passed to a component -- are static and immutable inside the receiving component as React's documentation in \cite[/docs/components-and-props.html\#props-are-read-only]{React} demonstrates. Components that only render props and don't hold their own application state can be seen as pure functions which render the exact data they receive every render cycle. Props could thus be understood as parameters of a pure function, leading us back to the previously explained context of the function \texttt{f(data) = UI} in \ref{sec:reactIntro}. Another important aspect of React's prop mechanism is, that props cannot be changed inside the receiving component. Props that are passed into a component are immutable and trying to mutate them will result in React not noticing any changes in the data and therefore not activating a new render cycle.
 
 \subsubsection{Stateful components}
 
-The attentive reader now probably has the following question: ''How to I introduce mutable application state, if data coming from props is immutable?'' React provides a mechanism for handling mutable application state as well. The code example in \ref{prog:reactStatefulComponent} clearly shows the difference beween a purely presentational component on line 1 and a stateful component that keeps track of its own application state on line 8. 
+\begin{program}
+\caption{Simple example of a React component and its usage} 
+\label{prog:reactStateful}
+\begin{JsCode}
+import React from "react";
+import ReactDOM from "react-dom";
 
-Creating stateful components is very easy, as the component class just has to derive from \texttt{React.Component}. The constructor in line 12 of \ref{prog:reactStatefulComponent} calls its super construcor -- \texttt{React.Component} in that case -- and then initializes its own state to \texttt{\{count: 1\}}. The state object is available throughout the whole class component and can be used to render UI components, that depend on that state.
+const Count = props => (
+  <div>
+    <div>I render the count</div>
+    <div>The count is currently {props.count}</div>
+  </div>
+);
 
-Stateful components consist of a set of lifecycle methods that are called every render cycle of React which is different to stateless functional components, as they are just pure functions. React's lifecycle methods -- some of which can be found on lines 19, 23, 27, 31, and 39 in \ref{prog:reactStatefulComponent} -- make it possible to exactly control how components react to certain application state updates. Their names make it pretty clear what they will handle. 
+class StatefulComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 1
+    };
+  }
 
-A comprehensive guide on component lifecycle methods can be found in React's documentation in \cite[/docs/react-component.html]{React}. By overwriting the lifecycle methods, developers can add their own specific logic to each lifecycle of the component. It is also possible to completely omit overwrting any lifecycle method. Notice, how stateful class components have to overwrite the \texttt{render()} function to being able to actually render content. The render function is called every time the component goes trough a new render cycle.
+  counterHandler = () => {
+    this.setState(state => ({ count: state.count + 1 }));
+  };
 
-The lifecycle method on line 23 in \ref{prog:reactStatefulComponent} is also very important, as it controls, if the component should even go through it's rendering cycle or not. As mentioned before, React advises to avoid reconciliation where ever possible. The \texttt{shouldComponentUpdate} lifecycle method allows the developer to avoid unnecessary render and reconciliation cycles by directly preventing a render cycle. The \texttt{shouldComponentUpdate} method gets passed all new props and state which can be compared to previous data. The example in \ref{prog:reactStatefulComponent} shows, that the count from the current and the next state is compared and if they differ, \texttt{true} is returned, which means to React that a new render cycle is necessary. If for example the \texttt{App} component on line 49 would render the \texttt{StatefulComponent} 100 times, the stateful component is smart enough to only run though its lifecyle methods only once, as \texttt{shouldComponentUpdate} method tells the component that nothing has changed and therefore omitting the rest of the lifecycle methods. Not calling the render function and its \texttt{createElement()} methods under the hood also means, that no reconciliation has to be performed for the stateful component neither, resulting in improved render performance of the app.
+  render() {
+    return (
+      <div>
+        <h1>{this.props.title}</div>
+        <Count count={this.state.count} />
+        <button onClick={this.counterHandler}>+1</button>
+      </div>
+    );
+  }
+}
+
+const App = () => <StatefulComponent title={"Counter Example"} />;
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);
+\end{JsCode}
+\end{program}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.25\columnwidth]{react002}
+  \caption{React counter component output}
+  \label{fig:reactCounterComponent}
+\end{figure}
+
+The attentive reader now probably has the following questions: ''How do I introduce mutable application state, if data coming from props is immutable?'' or ''How does React notice, if I introduce changes to the application state?''. At this point it is important to remember, that React works best when keeping the unidirectional dataflow model in mind. The library provides a built in mechanism for handling mutable application state out of the box. The code example in \ref{prog:reactLifecycleComponent} shows the difference beween a purely presentational component on line 4 and a stateful component that keeps track of its own application state on line 11.
+
+First of, creating stateful components is quite effortless, as the component class just has to derive from \texttt{React.Component} as shown in line 11 of the program in \ref{prog:reactStateful}. The constructor in line 12 calls its super construcor -- \texttt{React.Component} in that case -- and then initializes its own state to \texttt{\{count: 1\}} right away even before the component has mounted for the first time. The state object is available throughout the whole class component and can be used to render UI components, that depend on that current state.
+
+The example program in \ref{prog:reactStateful} demonstrates well, how the current state is used in the render method in line 23. Once the component calls its render method, the current state is accessed and rendered. Note, that the state cannot be altered and is immutable and readonly as well as the component's props. To introduce state changes, React provides a class member function which is called ''setState'', which takes a callback to update the internal component state as showed in line 20 of \ref{prog:reactStateful}. When the \texttt{this.setState} method is called, React is informed that there had been a state update and initiates a new render cycle which as a consequence triggers the whole lifecycle of the component again. The next section is all about React's lifecycle methods and how they can be utilized by the developer.
 
 % reconciliation?
 
 % components do not have to have state for lifecycle components to work
 
+\section{React's component lifecycle}
+
 \begin{program}
 \caption{Simple example of a React component and its usage} 
-\label{prog:reactStatefulComponent}
+\label{prog:reactLifecycleComponent}
 \begin{JsCode}
 import React from "react";
 import ReactDOM from "react-dom";
@@ -192,7 +244,7 @@ class StatefulComponent extends React.Component {
     );
   }
 }
-
+  
 const App = () => <StatefulComponent />;
 
 const rootElement = document.getElementById("root");
@@ -200,12 +252,34 @@ ReactDOM.render(<App />, rootElement);
 \end{JsCode}
 \end{program}
 
+React components consist of a set of lifecycle methods that are called every render cycle of React which is different to stateless functional components, as they are just pure functions. The previous code example in \ref{prog:reactStateful} was enhanced in \ref{prog:reactLifecycleComponent}. A few lifecycle methods -- some of which can be found on lines 19, 23, 27, 31, and 39 in \ref{prog:reactLifecycleComponent} -- make it possible to exactly control how components react to certain application state updates. Their names make it pretty clear what aspect of the lifecycle they handle.
+
+React's documentation in \cite[/docs/react-component.html]{React} includes a comprehensive guide on component lifecycle methods. By overriding the lifecycle methods inside their components, developers can add their own specific logic to each lifecycle in every render cycle of the components. Overriding lifecycle methods is optional; it is therefore possible to omit implementing any lifecycle method at all. Notice, how class components always have to override the \texttt{render()} function to being able to actually render content. The render function is called every time the component goes trough a new render cycle.
+
+A good visualization of the full lifecycle of a React component can be found in the GitHub repo in \cite{ReactRenderCycleGithub}. The web application in \cite{ReactRenderCycleDiagram} vizualizes the separation of the different phases a component goes through when iterating though its lifecycle methods. Figure \ref{fig:reactLifecycleMethods} shows a screenshot of the application for the sake of being able to demonstrate the diagram in the thesis. The diagram is based off a tweet in \cite{ReactCycleTweet} from Dan Abramov, one of the core contributers to the React library.
+
+The whole lifecycle basically consists of 3 phases: The ''Render phase'', the ''Pre-commit phase'' and the ''Commit phase''. Also, the component can be in three different states: The mounting state, the updating state and finally the unmounting state. The visualization in \ref{fig:reactLifecycleMethods} shows the horizontal states and vertical phases of a React component. Every state of the component has to vertically iterate all the phases each cycle. Notice, how the update render cycle does not call the constructor. What is also interesting is the fact, that the unmounting state just calls the \texttt{componentWillUnmount} method.
+
+The most important lifecycle methods are \texttt{componentDidMount}, \texttt{componentDidUpdate} and \texttt{componentWillUnmount}. The \texttt{componentShouldUpdate} method is also important for improving performance as explained later in this section. There are also more uncommon lifecycle methods for special occasions like the \texttt{getDerivedStateFromProps} method or the \texttt{getSnapshotBeforeUpdate} method, which are not used very often and are not elaborated in this thesis to not go out of scope of this thesis. It is important to know, that the render phase is pure and can safely aborted completely, resulting in a cancelled lifecycle. Cancelling complete lifecycles early can immensely improve performance.
+
+The program in \ref{prog:reactLifecycleComponent} is a good demonstration of how lifecycle methods can be used. The lifecycle method on line 23 for example controls, if the component should even go through it's rendering cycle or not. As mentioned before, Facebook advises to avoid reconciliation where ever possible. The \texttt{shouldComponentUpdate} lifecycle method already aborts the render cycle in the so called ''render phase'' which allows developers to avoid unnecessary reconciliation cycles and therefore also commitments to the DOM. 
+
+The \texttt{shouldComponentUpdate} method is the first lifecycle function that gets called in the example in \ref{prog:reactLifecycleComponent} aside from the constructor, which only gets called once in the mounting state of the component. The \texttt{shouldComponentUpdate} method gets passed all future props \emph{and} state which can then be compared to previous data. The example in \ref{prog:reactLifecycleComponent} shows, that the count from the current and the next state is compared and if they differ, \texttt{true} is returned, which means to React that a new render cycle is necessary. 
+
+If for example the \texttt{StatefulComponent} on line 11 would have a parent that renders it 100 times, the stateful component is now smart enough to only run though its lifecyle methods only once, as \texttt{shouldComponentUpdate} method tells the component that nothing has changed and therefore omitting the rest of the lifecycle methods. Not calling the render function and its \texttt{createElement()} methods under the hood also means, that no reconciliation has to be performed for the stateful component, resulting in improved render performance of the app.
+
+The other lifecycle methods in the code example in \ref{fig:reactLifecycleMethods} are pretty self explanatory. There are a few best practices though according to the documentation in \cite{React}. The \texttt{componentDidMount} method for example is the one to handle side effects when fetching data from an api for example. Another usecase would be registering event handlers in the \texttt{componentDidUpdate} method and unregistering them in the \texttt{componentWillUnmount} method.
+
 \begin{figure}
   \centering
-  \includegraphics[width=0.25\columnwidth]{react002}
-  \caption{React counter component output}
-  \label{fig:reactCounterComponent}
+  \includegraphics[width=1\columnwidth]{react003}
+  \caption{React lifecycle methods diagram}
+  \label{fig:reactLifecycleMethods}
 \end{figure}
+
+\section{Conclusion}
+
+All in all understanding the lifecycle of React components is a key aspect of also understanding how thesis project was implemented. Lifecycle methods play a key role when combining the rendering cycle of D3 with React's rendering cycle. It is important to know, that React does have a virtual DOM, which it will use to compare to the real DOM in order to decide if there are any updates that have to be committed to the DOM. Rendering a component with the same state multiple times will result in React not committing anything to the DOM as the virtual DOM then equals the real DOM. It is also important to remember, that these so called ''reconciliation cycles'' can completely be avoided by implementing the \texttt{shouldComponentUpdate} lifecycle method.
 
 % what is state for the one component is immutable static prop for the other
 
@@ -215,6 +289,6 @@ ReactDOM.render(<App />, rootElement);
 
 % maybe introduce stateful functional components
 
+% PureComponents? Hooks?
+
 % \section{The difference between imperative and declarative APIs}
-
-
