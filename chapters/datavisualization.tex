@@ -1,20 +1,56 @@
-\chapter{Data Visualization}
+\chapter{Data Visualization with React and D3}
 \label{cha:visualization}
 
-\section{Introduction to force graphs}
+The most important aspect of the master's thesis is the thesis project. This chapter introduces the reader to the software and the resulting prototypes that were developed during the implementation phase of the thesis project. A complete walk-through helps the reader to understand the implementation differences of all prototypes. Finally the chapter introduces the reader to the performance testing methodology and the different devices the software was tested on.
 
 \section{Prototypes}
 
+This section introduces the reader to the prototypes of the thesis project. It also explains how the project initially originated. Furthermore every resulting prototype of the project is listed and explained extensively.
+
+\subsection{Introduction and motivation of the project}
+
+When trying to find the best combination of two libraries, developing prototypes is extremely important. Combining React and D3 in a few different ways in the thesis project ultimately lead to one prototype that then came out on top. The project was primarily realized to provide React developers with an alternative which makes it possible to use D3 force viszalizations by writing React code. Finding a React implementation of D3's force simulation which performs better than the vanilla D3 implementation was not the main goal of the project.
+
+The obvious question "Why do I even need a combination of D3 and React if I could just use pure D3 instead?" can quickly be answered. The initial idea of the project came to mind when a client requested a fully fledged React web application which also included some complex data visualization aspects that are animated in the browser. Instead of having to implement the viszalization part of the application in pure D3, the combination of React and D3 enables all developers of the project to only write declarative D3 code. Implementing a combination layer would then result in only one code base that has to be mainitained, instead of two. Also, as mentioned before, D3 tends to become exponentially more difficult to maintain as the project grows.
+
 \subsection{Pure D3 prototype}
+
+The first implementation was realized to get a feeling, if D3 can be integrated into React after all. The way this graph type is implemented is, that React will only render one base \texttt{<svg id="d3-root"/>} tag. After the component has mounted, D3 will hook into the base SVG component via the provided id and build its own force simulation on top. This means, that D3 will also append and remove the DOM nodes according to the data that was passed to D3. React's reconciliation algorithm will not handle nodes that are inside the D3 force simulation.
+
+If the data updates, the new data is provided directly to D3 instead of letting React render anything. Of course each data update will cause React to render the base SVG component but due to the virtual DOM implementation of React the SVG is never newly rendered, as it is static without any dynamic content. The reconciliation algorithm will prevent React from newly committing the SVG tag to the DOM. This fact then enables D3 to work completely separate from React. D3 on the other hand can be implemented like on any other web project as well. Developers must implement the initial force graph generation but also the update logic of course that handles the updated data and applies it to the force graph simulation.
+
+There are 2 component life cycle methods from React that are crucial to this implementation. \texttt{componentDidMount()} is used to initialize D3, let it select the base node and then build the whole force simulation on top. It is important to use this life cycle method, as it makes sure, the component has already been rendered once in order for D3 to being able to select an existing real DOM node. The second method is \texttt{componentDidUpdate()} which provides the updated data directly to D3 which then handles updating the force graph. 
+
+\subsubsection{Advantages}
+
+Performance
+
+\subsubsection{Disadvantages}
+
+Cannot use React to render custom elements
 
 \subsection{Pure React prototype}
 
+Pure React implementation
+
 \subsection{D3 and React hybrid}
+
+Hybrid implementation.
 
 \section{Comparison of the different proposed Prototypes}
 
+The implementation of the prototypes is explained.
+
 \section{Building a stable Testing Environment}
+
+The testing environment is explained. Request animation frame testing is explained as well.
 
 \section{Testing methodologies}
 
+I describe how i tested the whole thing
+
 \section{Testing devices}
+
+What devices did i benchmark my prototypes on?
+
+%\section{Introduction to force graphs}
