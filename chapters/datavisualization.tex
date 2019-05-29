@@ -83,6 +83,10 @@ export const buildForceSimulation = (options) => {
 
 %% DATA ENCAPSULATION %%
 
+%% ----------------------------------------------------------------------------------------- %%
+%% ---------------------------------------- PURE D3 ---------------------------------------- %% 
+%% ----------------------------------------------------------------------------------------- %%
+
 \subsection{Pure D3 prototype}
 
 \begin{figure}
@@ -132,7 +136,7 @@ initGraph = () => {
     .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')')
 
   const simOptions = this.extractSimOptions()
-  const { simulation, updateSimulation } = buildForceSimulation({
+  const { simulation, updateSimulation } = buildForceSimulation({ /+\label{line:buildForceSimulation}+/
     type: SIMULATION_TYPE.PURE_D3,
     ...simOptions,
   })
@@ -209,6 +213,10 @@ One of the most apparent advantages of the pure D3 force graph implementation is
 
 The most significant Disadvantage with the pure D3 implementation is the fact that all DOM manipulations are handled via imperatively chained function calls on the node selections of D3 which also implies, that the node rendering cannot be customized via passing custom render functions for instance. The force graph's code itself has to be changed to get different node and link appearances, which leads to the previously described problem of encountering unmaintainable code over time.
 
+%% ---------------------------------------------------------------------------------------- %%
+%% -------------------------------------- PURE REACT -------------------------------------- %% 
+%% ---------------------------------------------------------------------------------------- %%
+
 \subsection{Pure React prototype}
 
 \begin{figure}
@@ -230,7 +238,7 @@ An existing project of Uber strongly inspired the pure React implementation. Ube
 
 \subsubsection{Implementation details}
 
-The initialization of the pure react force graph pretty much looks the same as in the pure D3 code example in \ref{prog:pureD3InitFn} instead of passing the correct simulation type of course. The biggest and most important difference to the pure D3 implementation is that the initialization of the force simulation takes place inside the constructor instead of the \texttt{componentDidMount()} lifecycle method. As mentioned before, the pure react prototype contains all node and link positions in the internal state. Consequently, the internal state must exist before calling the \texttt{render()} lifecycle method the first time.
+The initialization of the pure react force graph pretty much looks the same as in line \ref{line:buildForceSimulation} in the pure D3 code example in \ref{prog:pureD3InitFn}. The pure React prototype passes the correct according simulation type of course though. The biggest and most important difference to the pure D3 implementation is that the initialization of the force simulation takes place inside the constructor instead of the \texttt{componentDidMount()} lifecycle method. As mentioned before, the pure react prototype contains all node and link positions in the internal state. Consequently, the internal state must exist before calling the \texttt{render()} lifecycle method the first time.
 
 Due to the fact, that the pure React force graph component provides the complete dataset about all nodes and links in the simulation, the render function can be 100\% declarative code as seen in the code example in \ref{prog:pureReactRender}. The link and node properties which contain presentational data like the size of a node or the color of a link come from the component's props, as they're passed in from the parent container. However, the link and node positions come from the components internal state. The example code in \ref{prog:pureReactRender} shows very well, how the nodes and links components have direct access to the link and node positions. Figure \ref{fig:pureReactLifecycle} also shows how the react components handle all the SVG properties.
 
@@ -305,7 +313,26 @@ The biggest advantage sadly is also the biggest disadvantage of the pure react f
 
 Another very big disadvantage of the pure React force graph implementation is, that some D3 functionalities like dragging nodes or zooming in and out of the graph have to be implemented from scrath in pure React as well which can be a tedious task. Due to the component being rendered multiple times a second, adding drag handlers that also perform well is a very tedious task for example. 
 
+%% ----------------------------------------------------------------------------------------- %%
+%% ----------------------------------- REACT & D3 HYBRID ----------------------------------- %% 
+%% ----------------------------------------------------------------------------------------- %%
+
 \subsection{D3 and React hybrid}
+
+\begin{figure}
+\centering
+\includegraphics[scale=.6, trim= 2cm 3cm 5cm 3cm, clip, width=1\columnwidth]{impl003.pdf}
+\caption{Pure React force graph lifecycle visualization}
+\label{fig:reactD3HybridLifeCycle}
+\end{figure}
+
+Last but not least there is the D3 and React hybrid force graph component implementation. The prototype not only provides the developing experience of React, but also puts the complete feature set of D3 at the developers disposal. The hybrid implementation makes it possible to handle the representational aspect of the simulation via React and let D3 calculate and also manipulate the DOM node positions of the individual nodes and links in the force graph. Figure \ref{fig:reactD3HybridLifeCycle} demonstrates via color coding what parts of the DOM content are handled by React and D3. 
+
+The way the prototype achieves the previously mentioned functionality is that the D3 force simulation is initialized \emph{after} the hybrid React component is initialized. As in the other two protoypes, all force data is passed into the hybrid force graph component via props from the parent component. The nodes and links which are represented in the props' data are rendered by React and after the commit state has been passed, the data is then handed to D3 as well via the \texttt{componentDidUpdate()} life cycle method. D3 selects the already committed DOM nodes and applies the internally calculated force position data.
+
+As described in chapter \ref{cha:react}, during the component's render phase the reconciliation algorithm compares newly applied data of the component's state or props with the virtual DOM and then decides which DOM nodes actually need to be committed to or removed from the DOM. Once the simulation data updates via a prop update from the parent component, some nodes or links therefore might be added, changed or could just be removed, if they are non existent anymore in the new version of the applied data.
+
+The most important aspect of the hybrid protoype is, that D3 can re-select currently existing DOM nodes and connect them to the current force simulation data. Due to the fact that the selection process is only executed in React's commit phase, D3 can read the up to date version of the DOM. When reading or manipulating the DOM in the commit phase, React guarantees the DOM to be a representation of the component's current data. Therefore D3's selection happens \emph{after} the render phase. Again, figure \ref{fig:reactLifecycleMethods} visualizes all of React's lifecyle phases.
 
 \subsubsection{Implementation details}
 
@@ -313,22 +340,36 @@ Another very big disadvantage of the pure React force graph implementation is, t
 
 \subsubsection{Advantages}
 
+The benefit of the hybrid implementation is, that the node and link representation can be handled by React. Writing React code also implies, that there are no disjointed code fragments of appending and removing components like in D3 code. Also the rendering performance is close to a pure D3 implementation, as the nodes for the simulation only have to be rendered once every update by React and then D3 will take over by altering the positions on the actual DOM nodes.
+
 \subsubsection{Disadvantages}
 
 % a little worse dev experience, as it might be unclear, that the position is actually handled by D3 completely.
+
+%% ----------------------------------------------------------------------------------------- %%
+%% ------------------------------------- COMPARISON ---------------------------------------- %% 
+%% ----------------------------------------------------------------------------------------- %%
 
 \section{Explicit comparison of the different proposed Prototypes}
 
 The implementation of the prototypes is explained.
 
-\section{Building a stable Testing Environment}
+%% ----------------------------------------------------------------------------------------- %%
+%% ---------------------------------- TEST ENVIRONMENT ------------------------------------- %% 
+%% ----------------------------------------------------------------------------------------- %%
+
+\section{Test environment setup}
+
+short intro to the test environment idea
+
+\subsection{Building a stable Testing Environment}
 
 The testing environment is explained. Request animation frame testing is explained as well. Maybe some code examples. Explain test iterations and route parameters. Explain static seed generation.
 
-\section{Testing methodologies}
+\subsection{Testing methodologies}
 
 I describe how i tested the whole thing
 
-\section{Testing devices}
+\subsection{Testing devices}
 
 What devices did i benchmark my prototypes on?
