@@ -14,6 +14,7 @@ When trying to find the best combination of two libraries, developing prototypes
 The obvious question "Why do I even need a combination of D3 and React if I could just use pure D3 instead?" can quickly be answered. The initial idea of the project came to mind when a client requested a fully fledged React web application, which also included some complex data visualization aspects that are animated in the browser. Instead of having to implement the visualization part of the application in pure D3, the combination of React and D3 enables all developers of the project to write declarative D3 code. Using a combination layer API would then result in only one code base that has to be maintained, instead of two. Also, as mentioned before, D3 tends to become exponentially more challenging to maintain as the project grows.
 
 \subsection{Project setup}
+\label{sub:projectSetup}
 
 To be able to test multiple prototypes, one crucial aspect of the project is the force simulation builder setup. All prototypes are built on top of the simulation builder module. The module contains a few D3 specific methods that allow developers to build their own individual force simulation prototypes. All prototypes can reuse some of the already existing methods, and some new custom methods can be implemented as well.
 
@@ -318,6 +319,7 @@ Another very big disadvantage of the pure React force graph implementation is, t
 %% ----------------------------------------------------------------------------------------- %%
 
 \subsection{D3 and React hybrid}
+\label{sub:D3AndReactHybrid}
 
 \begin{figure}
 \centering
@@ -326,18 +328,58 @@ Another very big disadvantage of the pure React force graph implementation is, t
 \label{fig:reactD3HybridLifeCycle}
 \end{figure}
 
-Last but not least there is the D3 and React hybrid force graph component implementation. The prototype not only provides the developing experience of React, but also puts the complete feature set of D3 at the developers disposal. The hybrid implementation makes it possible to handle the representational aspect of the simulation via React and let D3 calculate and also manipulate the DOM node positions of the individual nodes and links in the force graph. Figure \ref{fig:reactD3HybridLifeCycle} demonstrates via color coding what parts of the DOM content are handled by React and D3. 
+Last but not least there is the D3 and React hybrid force graph component implementation. The prototype not only provides the developing experience of React, but also puts the complete feature set of D3 at the developers disposal. The hybrid implementation makes it possible to handle the representational aspect of the simulation via React and let D3 not only calculate but also manipulate the DOM node positions of the individual nodes and links in the force graph. Figure \ref{fig:reactD3HybridLifeCycle} demonstrates via color coding what parts of the DOM content are handled by React and D3. 
 
-The way the prototype achieves the previously mentioned functionality is that the D3 force simulation is initialized \emph{after} the hybrid React component is initialized. As in the other two protoypes, all force data is passed into the hybrid force graph component via props from the parent component. The nodes and links which are represented in the props' data are rendered by React and after the commit state has been passed, the data is then handed to D3 as well via the \texttt{componentDidUpdate()} life cycle method. D3 selects the already committed DOM nodes and applies the internally calculated force position data.
+The way the prototype achieves the previously mentioned functionality is that the D3 force simulation is initialized \emph{after} the hybrid React component is initialized and mounted. As in the other two protoypes, all force data is passed into the hybrid force graph component via props from the parent component. The nodes and links which are represented in the props' data are rendered by React and after the render phhase has been passed, the data is then handed to D3 via the \texttt{componentDidUpdate()} life cycle method. D3 selects the already committed DOM nodes and applies the internally calculated force position data. Figure \ref{fig:reactD3HybridLifeCycle} demonstrates how only post render phase lifecycle methods are used to pass data to D3.
 
 As described in chapter \ref{cha:react}, during the component's render phase the reconciliation algorithm compares newly applied data of the component's state or props with the virtual DOM and then decides which DOM nodes actually need to be committed to or removed from the DOM. Once the simulation data updates via a prop update from the parent component, some nodes or links therefore might be added, changed or could just be removed, if they are non existent anymore in the new version of the applied data.
 
-The most important aspect of the hybrid protoype is, that D3 can re-select currently existing DOM nodes and connect them to the current force simulation data. Due to the fact that the selection process is only executed in React's commit phase, D3 can read the up to date version of the DOM. When reading or manipulating the DOM in the commit phase, React guarantees the DOM to be a representation of the component's current data. Therefore D3's selection happens \emph{after} the render phase. Again, figure \ref{fig:reactLifecycleMethods} visualizes all of React's lifecyle phases.
+The most important aspect of the hybrid protoype is, that D3 selects already existing DOM nodes and simply connects them to the current force simulation data. Due to the fact that the selection process is executed in React's commit phase, D3 can read the up to date version of the DOM. As described in chapter \ref{cha:react}, reading or manipulating the DOM in the commit phase guarantees the DOM to be a representation of the component's current state and data. Therefore D3's selection happens \emph{after} the render phase to always apply its selection to the most recent version of the DOM. Again, figure \ref{fig:reactLifecycleMethods} visualizes all of React's lifecyle phases.
 
 \subsubsection{Implementation details}
 
-% react move
+As the name of the component already reveals, the implementation of the hybrid prototype is a combination of the previous two prototypes. The initialization of the hybrid graph component also looks very similar to the initialization on line \ref{line:buildForceSimulation} in the code snippet in \ref{prog:pureD3InitFn}. The only difference also in the hyhbrid implementaion is, that the hybrid simulation type is passed to the builder function. A very notable difference to the pure react component is, that the initializer function is called in the \texttt{componentDidMount()} lifecycle method, not in the component's constructor. As described before in the introduction of subsection \ref{sub:D3AndReactHybrid}, the component needs to be in the commit phase in order for D3 being able to hook into already committed DOM nodes.
 
+As described in the subsection \ref{sub:projectSetup}, the \texttt{buildForceSimulation()} function is very important to ensure every prototype the same D3 force simulation object. Any changes in given option parameters will yield a different simulation of course, but the builder function is an idempotent function. If every prototype calls the builder function with the same force simulation option parameters, the method will always return the exact same simulation for every prototype. Like the other prototypes, the hybrid implementation of course also uses the force simulation builder function.
+
+In contrast to the other prototypes, updating the hybrid graph component is quite simple. The code snippet in \ref{prog:hybridTickHandler} shows, that the \texttt{componentDidUpdate} method just calls the updater function that was obtained from the \texttt{buildForceSimulation()} call. Due to the fact, that D3 handles the positioning of the nodes, updates in the components simulation data just have to be passed to D3 in order to update D3's force calculation. While the pure React prototype has to pass a rendercycle multiple times a second, the hybrid component only updates, if the parent container passes some new simulation data. As a consequence, the hybrid component can be rendered multiple times by the parent container but will prevent itself from updating via implementing the \texttt{shouldComponentUpdate()} lifecycle method.
+
+\begin{program}
+\caption{Component update handler of the hybrid force graph prototype}
+\label{prog:hybridTickHandler}
+\begin{JsCode}
+componentDidUpdate() {
+  this.updateSimulation(this.extractSimUpdateParams())
+}
+\end{JsCode}
+\end{program}
+
+The tick handler on the other hand contains a few D3 specific instructions in order to display the current force simulation state. As mentioned before, the hybrid component makes D3 responsible for positioning the DOM nodes correctly according to the current simulation data. Line \ref{line:hybridTickHhandler} in the code example in \ref{prog:hybridTickHandler} demonstrates, how the tick handler works in the hybrid prototype. In order to enable custom simulation handlers, the node and link handlers are extracted from the props of the component. If they're set from the parent container, they are utilized to handle the simulation tick. Otherwise the standard tick handlers on lines \ref{line:applyNodeTick} and \ref{line:applyLinkTick} are used. More information on how to customize the usage of sthe hybrid component can be read in chapter \ref{cha:opensource} later on.
+
+\begin{program}
+\caption{Simulation tick handler of the hybrid force graph prototype}
+\label{prog:hybridTickHandler}
+\begin{JsCode}
+applyNodeTick = (nodeSel) => nodeSel.attr('cx', (d) => d.x).attr('cy', (d) => d.y) /+\label{line:applyNodeTick}+/
+applyLinkTick = (linkSel) => linkSel.attr('d', this.getLinkPath) /+\label{line:applyLinkTick}+/
+
+ticked = () => { /+\label{line:hybridTickHhandler}+/
+  const { nodeTickHandler, linkTickHandler } = this.props
+
+  nodeTickHandler /+\label{line:decideNodeTickHandler}+/
+    ? nodeTickHandler(this.simulation.nodeSel)
+    : this.applyNodeTick(this.simulation.nodeSel)
+
+  linkTickHandler /+\label{line:decideLinkTickHandler}+/
+    ? linkTickHandler(this.simulation.linkSel)
+    : this.applyLinkTick(this.simulation.linkSel)
+}
+\end{JsCode}
+\end{program}
+
+Like the pure D3 prototype, the hybrid prototype also supports transitions. In order to achieve the transition functionality a library called "react-move" was used which can be found on its Github page in \cite{ReactMove}. Because React only renders its current state as a function of state, it is not possible to keep track of data throughout multiple render cycles. If for example a node with index "42" exists in render cycle 1 but not in render cycle 2, there is no way for React to know, that there was a node with index "42" in the first render cycle. React move provides an animation mechanism to tackle the previously mentioned problem. All of the simulation data is passed to the react-move component inside the hybrid node component, which then keeps track of data changes via an internal system. Via animation hook functions the behaviours of entering, transitioning and exiting nodes can be specified which is similar to the D3 prototype. Information about the usage and how the react-move library works internally can be found on the github project in \cite{ReactMove}.
+
+% react move
 \subsubsection{Advantages}
 
 The benefit of the hybrid implementation is, that the node and link representation can be handled by React. Writing React code also implies, that there are no disjointed code fragments of appending and removing components like in D3 code. Also the rendering performance is close to a pure D3 implementation, as the nodes for the simulation only have to be rendered once every update by React and then D3 will take over by altering the positions on the actual DOM nodes.
@@ -360,9 +402,13 @@ The implementation of the prototypes is explained.
 
 \section{Test environment setup}
 
-short intro to the test environment idea
+One of the most challenging aspects of the thesis project is the performance measurement of the prototypes. Modern broswers have incountable features of smoothing out performance. Using different browsers for benchmarks also means, that different JavaScript runtimes are used.
+
+Another big proplem was the fact, that browsers will detect the refresh rate of monitors. When using monitors with a refresh rate of 144 hertz, frames per second can go up to 144 FPS. When using 60 hertz monitors though the framerate is limited to 60 FPS.
 
 \subsection{Building a stable Testing Environment}
+
+To thest all three prototypes in a consistent way, a testing evironement is needed which produces consistent data across multiple instances.
 
 The testing environment is explained. Request animation frame testing is explained as well. Maybe some code examples. Explain test iterations and route parameters. Explain static seed generation.
 
@@ -371,5 +417,7 @@ The testing environment is explained. Request animation frame testing is explain
 I describe how i tested the whole thing
 
 \subsection{Testing devices}
+
+A set of 60 hertz monitor devices but also a few 144 hertz monitor devices. How to normalize results.
 
 What devices did i benchmark my prototypes on?
