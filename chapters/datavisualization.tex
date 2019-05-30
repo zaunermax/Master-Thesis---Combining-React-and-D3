@@ -101,7 +101,7 @@ The first prototype of the project was developed from an experimental implementa
 
 The implementation heavily relies on the fact, that React's reconciliation algorithm omits updates to the DOM if the same element is rendered consecutively. The pure D3 graph component only renders a static base SVG, as shown in the code snippet in \ref{prog:pureD3render}. After the component mounts, D3 hooks into the base SVG component via the provided ID and builds its force simulation on top. D3 also appends and removes the DOM nodes according to the data that was passed to D3. Figure \ref{fig:pureD3Lifecycle} demonstrates via color coding how react only renders the SVG element and D3 renders the simulation via the tick function.
 
-\begin{program}[H]
+\begin{program}
 \caption{Render function of the pure D3 prototype}
 \label{prog:pureD3render}
 \begin{JsCode}
@@ -122,7 +122,7 @@ There are 2 component life cycle methods from React that are crucial to this imp
 
 Once the component is initialized, the \texttt{componentDidMount()} lifecycle method directly calls the initializer function which can be seen on line 1 in the code snippet in \ref{prog:pureD3InitFn}. The initializing function appends the base \texttt{<g>} tag and also handles the translation of the current height and width of the component. Then the \texttt{buildForceSimulation()} function is called with the current options and parameters in order to get the simulation and the correct updater function. Note how the simulation type is passed to the builder function as well. The resulting simulation and updater function is then saved in the current component.
 
-\begin{program}[H]
+\begin{program}
 \caption{Pure D3 force graph initializing function}
 \label{prog:pureD3InitFn}
 \begin{JsCode}
@@ -152,7 +152,7 @@ What is also worth mentioning is the fact, that the simulation and the updating 
 
 Looking at the code in \ref{prog:pureD3updateApply}, the update applying functionality can be seen very well. If given a current simulation object, the function handles all newly entering, transitioning, and exiting nodes accordingly. Even an animation is applied. Each time, the pure D3 react component has goes through the \texttt{componentDidUpdate()} function, the \texttt{applyNodeUpdateCycle()} function is called as well. The force simulation building module can take in the updater function from the example in \ref{prog:pureD3updateApply} and composes it directly into the updating function as seen in line 14 in \ref{prog:forceBuildModule}.
 
-\begin{program}[H]
+\begin{program}[th]
 \caption{Function that applies the data update to D3 on data changes}
 \label{prog:pureD3updateApply}
 \begin{JsCode}
@@ -193,7 +193,7 @@ applyNodeUpdateCycle = (simulation) => {
 
 Another vital function of the pure D3 force graph is the tick handler that can be seen in the code snippet in \ref{prog:pureD3Tick}. The ticking function also gets passed to the force simulation builder function. Each iteration of D3's simulation tick the function then updates the position of all nodes and links in the simulation.
 
-\begin{program}[H]
+\begin{program}[th]
 \caption{Tick handling function of the pure D3 prototype}
 \label{prog:pureD3Tick}
 \begin{JsCode}
@@ -387,15 +387,19 @@ The rendering performance is quite sure close to a pure D3 implementation, as Re
 
 \subsubsection{Disadvantages}
 
-One disadvantage of the hybrid prototype is, that it might be unclear to maintainers of the library, that the positions of the nodes and links are handled by D3 and not React. Of course documenting the positioning aspect could be a solution to the problem. Writing good documentation is also time and ressource consuming for maintainers though. New maintainers of the library would have to completely understand how the hybrid combination of React and D3 works in order to start being productive on the library.s
+A mayor disadvantage of the hybrid prototype is, that it might be unclear to maintainers of the library that the positions of the nodes and links are handled by D3 and not React. Of course documenting the positioning aspect could be a solution to the problem. Writing good documentation is not only time but also ressource consuming for maintainers. New maintainers of the library would have to completely understand how the hybrid combination of React and D3 works in order to start being productive on the library.
 
-%% ----------------------------------------------------------------------------------------- %%
-%% ------------------------------------- COMPARISON ---------------------------------------- %% 
-%% ----------------------------------------------------------------------------------------- %%
+\subsection{Comparison of the different proposed Prototypes}
 
-\section{Explicit comparison of the different proposed Prototypes}
+When comparing the prototypes the most important aspect is to understand, which technology renders what part of the DOM exactly. Looking at the pure D3 prototype, React only renders the base SVG element so D3 can hook into the SVG base node and build up its own simulation. The pure React prototype on the other hand renders the complete DOM node tree of the whole simulation including the different positions. Last but not least, the hybrid prototype introduces a mixed rendering strategy, where React renders the whole DOM node tree but D3 selects the already rendered nodes and only manipulates its positions.
 
-The implementation of the prototypes is explained.
+The performance of the pure D3 prototype should act as a baseline for testing the other prototypes, as the whole simulation is handled by standard D3 code. The pure React prototype has to iterate a whole React render cycle on each simulation tick, which technically is performing worse than letting D3 manipulate the DOM nodes directly. Therefore the hybrid prototype takes advantage of both worlds by leaving the expensive calculations and node position manipulations to D3 while Rendering the nodes with declarative React code.
+
+Looking at the figures \ref{fig:pureD3Lifecycle}, \ref{fig:pureReactLifecycle}, and \ref{fig:reactD3HybridLifeCycle} again, they might appear to be quite similar. There are some subtle differences which make big differences though. Even though all prototypes mostly use 2 lifecycle methods, it is of utmost importance to recall in which component lifecycle phase the methods are called though. Figure \ref{fig:reactLifecycleMethods} can help to look up all common lifecycle methods again. While the pure D3 and hybrid prototype pass the simulation to D3 only in the commit phase, the pure React prototype has to pass its data to D3 in the render phase.
+
+\subsection{Conclusion}
+
+All in all, each prototype has an interesting implementation on its own. Also, every prototype has certain advantages and disadvantages. The question which prototype is the best is a subjective decision in the end . An aspect that can be measured though is performance. Chapter \ref{cha:performance} will show, how the individual prototypes will perform. As letting other developers profit from the findings of this master project is desired, the hybrid prototype will be an open source project. More on the plans of making the hybrid prototype open source can be read in chapter \ref{cha:opensource}.
 
 %% ----------------------------------------------------------------------------------------- %%
 %% ---------------------------------- TEST ENVIRONMENT ------------------------------------- %% 
@@ -403,15 +407,34 @@ The implementation of the prototypes is explained.
 
 \section{Test environment setup}
 
-One of the most challenging aspects of the thesis project is the performance measurement of the prototypes. Modern broswers have incountable features of smoothing out performance. Using different browsers for benchmarks also means, that different JavaScript runtimes are used.
+This sction describes the testing environment that was implemented to compare the three force simulation component prototypes. There are a few challenges that had to be taken into account when realizing the testing environment. Also the implementation details are elaborated and explained. Last but not least the testing devices are introduced which are used to run the benchmark on.
 
-Another big proplem was the fact, that browsers will detect the refresh rate of monitors. When using monitors with a refresh rate of 144 hertz, frames per second can go up to 144 FPS. When using 60 hertz monitors though the framerate is limited to 60 FPS.
+\subsection{Challenges}
+
+One of the most challenging aspects of the thesis project is the performance measurement of the prototypes. Modern broswers have an uncountable amount of features that help to smooth out the performance to improve user perception. Using different browsers for benchmarks also means, that different JavaScript runtimes are used to run the benchmarks.
+
+When benchmarking web applications it is very complicated to get performance values that have scientific relevance in order to compare them to then get valid results. Subsection \ref{sub:perfImplDetails} introduces a system that was especially implemented to measure the performance of JavaScript web applications.
+
+Another big proplem was the fact, that browsers will detect the refresh rate of monitors. When using monitors with a refresh rate of 144 hertz, frames per second can go up to 144 FPS. When using 60 hertz monitors though the framerate is limited to 60 FPS. The maximum amount of request animation frame calls in the browsers can go up to the hertz the browser window runs in. 
+
+Speaking of the request animation frame functionality, it must be mentioned that each browser has a different implementation of the funtionality. For example chrome is smoothing out the performance by trying to fire the animation frames consistently, which means that the overall performance might be lowered in order to achieve a smoother framerate. Experience shows, that Firefox on the other hand always fires its animation frames whenever a frame is available which can result in higher overall but not as smooth framerates.
+
+Last but not least another challenge was to build a performance measuring environement that can be used without adding code to the prototypes. Theoretically each prototype should be a complete component that can be shipped as a third party library. By adding code for performance measurement the components would contain functionality that is not needed when shipping production builds of the components.
 
 \subsection{Building a stable Testing Environment}
 
-To thest all three prototypes in a consistent way, a testing evironement is needed which produces consistent data across multiple instances.
+To thest all three prototypes in a consistent way, a testing evironement is needed which produces consistent data across multiple instances. Of course when testing the force simulation prototypes the data they're tested with has to be consistent as well. Generating an arbitrary amount of random generated nodes and links is not a problem, as JavaScript has a random function which can be utilized to generate random data. Unfortunately the random generator cannot be seeded to get consistent pseudo random results. The library \emph{seedrandom} in \cite{SeedRandom} is the perfect technology to solve the problem of generating consistent data across multiple iterations of the benchmark tests.
 
-The testing environment is explained. Request animation frame testing is explained as well. Maybe some code examples. Explain test iterations and route parameters. Explain static seed generation.
+The testing environment is basically designed to be a stateful container which generates some random data and then passes it to the desired prototype. As D3 simulations provide a mechanism to add an event handler whenever the simulaton stops, it is no problem to add a handler on the benchmark component that restarts the benchmark with some newly generated data until the desired amount of benchmark iterations is reached. 
+
+Via a custom helper utility module it is possible to generate a specified amount of random nodes and links. The method to generate the random data takes exactly two parameters, the number of nodes and the number of links. To generate some consistent pseudo random force simulation data the previously mentioned seedrandom module is used internally.
+
+Finally the benchmark tool has to be easy to use an all kinds of devices. Therefore a small React application was created which can be deployed on any static webhosting service. The application lets users select the desired force simulation implementation benchmark which will then run in the browser.
+
+\subsection{Implementation details}
+\label{sub:perfImplDetails}
+
+I describe how I implemented the benchmark component.
 
 \subsection{Testing methodologies}
 
