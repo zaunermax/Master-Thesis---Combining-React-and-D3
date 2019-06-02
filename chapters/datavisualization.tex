@@ -411,36 +411,44 @@ This sction describes the testing environment that was implemented to compare th
 
 \subsection{Challenges}
 
-One of the most challenging aspects of the thesis project is the performance measurement of the prototypes. Modern broswers have an uncountable amount of features that help to smooth out the performance to improve user perception. Using different browsers for benchmarks also means, that different JavaScript runtimes are used to run the benchmarks.
+One of the most challenging aspects of the thesis project is the performance measurement of the prototypes. Modern broswers have an uncountable amount of features that help to smooth out the performance to improve user perception. Getting some consistent performance numbers is much harder due to inconsistent browser optimizations. Using different browsers for benchmarks also means, that different JavaScript runtimes are used to run the benchmarks. All engines have different execution and parsing speeds. Also the mechanism to speed up frequently accessed script code is different, which also makes it harder to get consistent performance numbers.
 
-When benchmarking web applications it is very complicated to get performance values that have scientific relevance in order to compare them to then get valid results. Subsection \ref{sub:perfImplDetails} introduces a system that was especially implemented to measure the performance of JavaScript web applications.
+When benchmarking web applications it is very complicated to get performance values that have scientific relevance which can be compared to get some valid research results. The next section introduces a system that was especially implemented to measure the performance of JavaScript web applications. The system tries to tackle all challenges in order to produce valid benchmark results.
 
-Another big proplem was the fact, that browsers will detect the refresh rate of monitors. When using monitors with a refresh rate of 144 hertz, frames per second can go up to 144 FPS. When using 60 hertz monitors though the framerate is limited to 60 FPS. The maximum amount of request animation frame calls in the browsers can go up to the hertz the browser window runs in. 
+Another big proplem is the fact, that browsers detect the refresh rate of monitors when utilizing the request animation frame functionality. Monitors with a refresh rate of 144 hertz allow browsers to produce up to 144 frames per second. 60 hertz monitors on the other hand limit the browser's framerate to 60 FPS. The maximum amount of animation frame executions in any browser can only ever go up to the monitor's amount of hertz the browser window is running in. 
 
-Speaking of the request animation frame functionality, it must be mentioned that each browser has a different implementation of the funtionality. For example chrome is smoothing out the performance by trying to fire the animation frames consistently, which means that the overall performance might be lowered in order to achieve a smoother framerate. Experience shows, that Firefox on the other hand always fires its animation frames whenever a frame is available which can result in higher overall but not as smooth framerates.
+Speaking of utilizing the request animation frame functionality, it must be mentioned that each browser has a different implementation of the funtionality. The Chrome browser for example is smoothing out the performance by trying to executing animation frames regularly, which means that the overall performance might be lowered in order to achieve a smoother framerate. Experience shows, that Firefox on the other hand always fires its animation frames whenever a frame is available which can result in higher overall but not as consistent framerates.
 
-Last but not least another challenge was to build a performance measuring environement that can be used without adding code to the prototypes. Theoretically each prototype should be a complete component that can be shipped as a third party library. By adding code for performance measurement the components would contain functionality that is not needed when shipping production builds of the components.
+Last but not least another challenge was to build a performance measuring environement that can be used without adding code to the prototypes. Theoretically each prototype should be a complete component that can be shipped as a third party library. By adding performance measurement specific code, the components would contain functionality that is not needed when shipping production builds of the components.
 
 \subsection{Building a stable Testing Environment}
-
-To thest all three prototypes in a consistent way, a testing evironement is needed which produces consistent data across multiple instances. Of course when testing the force simulation prototypes the data they're tested with has to be consistent as well. Generating an arbitrary amount of random generated nodes and links is not a problem, as JavaScript has a random function which can be utilized to generate random data. Unfortunately the random generator cannot be seeded to get consistent pseudo random results. The library \emph{seedrandom} in \cite{SeedRandom} is the perfect technology to solve the problem of generating consistent data across multiple iterations of the benchmark tests.
-
-The testing environment is basically designed to be a stateful container which generates some random data and then passes it to the desired prototype. As D3 simulations provide a mechanism to add an event handler whenever the simulaton stops, it is no problem to add a handler on the benchmark component that restarts the benchmark with some newly generated data until the desired amount of benchmark iterations is reached. 
-
-Via a custom helper utility module it is possible to generate a specified amount of random nodes and links. The method to generate the random data takes exactly two parameters, the number of nodes and the number of links. To generate some consistent pseudo random force simulation data the previously mentioned seedrandom module is used internally.
-
-Finally the benchmark tool has to be easy to use an all kinds of devices. Therefore a small React application was created which can be deployed on any static webhosting service. The application lets users select the desired force simulation implementation benchmark which will then run in the browser.
-
-\subsection{Implementation details}
 \label{sub:perfImplDetails}
 
-I describe how I implemented the benchmark component.
+A testing evironement which produces consistent data input across multiple iterations yields the best testing results when benchmarking all three prototypes. Testing the force simulation prototypes with the exact same data across multiple benchmarks, environments, and devices is of utmost importance. A valid solution is to use a pseudo random data generator which can be restarted and reseeded each benchmark iteration.
+
+Generating an arbitrary amount of random node and link positions is not a problem, as JavaScript has a built in random generator which can be utilized to generate random data. Unfortunately, JavaScript's random generator cannot be seeded to achieve consistent pseudo random results. The library \emph{seedrandom} in \cite{SeedRandom} is the perfect technology to solve the problem of generating consistent data across multiple iterations of the benchmark tests.
+
+Due to the fact, that browsers oftentimes yield different performance numbers across iterations with identical data, the amount cycle per test data iterations sets has to be increased. When testing one specific iteration multiple times, the average value has much more sigificance than testing an iteration only once. Therefore the testing environment must have support for different iteration configurations which can be run an arbitrary amount of times.
+
+The testing environment is basically designed to be a stateful container which generates some random data and then passes it to the desired prototype. D3 simulations provide a mechanism to add an event handler whenever the simulaton stops, it is therefore no problem to pass a handler to the benchmark component that is executed whenever the simulaton stops. The handler can be used to restart the benchmark with some newly generated data until the desired amount of benchmark iteration cycles is reached.
+
+Pseudo random generated data is obtained by a specially implemented custom helper utility module. The custom module is designed to generate a specified amount of random nodes and links. The method to generate random data simply takes two parameters -- the number of nodes and the number of links. Generating consistent pseudo random data is possible by internally using the previously mentioned seedrandom module.
+
+Tackling the performance measurement problem is a much harder task though. In order to being able to measure the amount of frames per second, the request animation browser functionality can be used. Another custom implemented modulue provides some functionality that is specifically designed to measure performance intensive JavaScript animations. By requesting an animation frame as often as possible in a terminable infinite loop, a reference timestamp can be used to measure the amount of animation frame executions per seconds which is equal to the frames per second the browser produces.
+
+Presenting the performance results mustn't be underestimated neither. To provide benchmark results in an appealing way, each iteration is represented via a visual container that contains all relevant information for a specific test iterations. If there are 6 test iterations, 6 containers are presented. The contaners contain the number of cycle per iteration, the test configuration, the number of frames per second, the overall execution time per cycle, the average frame time and also the highest frame time.
+
+Finally the benchmark tool has to be easy to use on all kinds of devices. The thesis project also contains a small React application which can be deployed on any static webhosting service that is able to serve single page applications. The React application is a wrapper around the testing environment which lets users select a desired benchmark for any of the three force simulation prototypes and then runs it in the browser. Each benchmark also has an easily distinguishable URL to being able to simply copy paste a specific benchark URL into any browser.
 
 \subsection{Testing methodologies}
 
-I describe how i tested the whole thing
+Running the benchmarks to get valid and scientific testing results is relatively straight forward. To get the most declarative performance numbers it is best to mainly use devices with a high monitor refresh rate. Devices with a low monitor refresh rate can possibly falsify some testing results. If for example a browser could possibly yield 100 FPS on an iteration, the system would only be able to measure a maximum of 60FPS. The theoretically possible 100 FPS would be capped to the monitor's 60 hertz refresh rate.
+
+Devices with high refresh rates can be perfect to measure the best performing prototype. One of the more interesting research aspects of the thesis though is the question, how well the prototypes perform on mobile devices with lower performance specifications than desktop PCs. Thus the testing results must be split up into different categories as a consequence. Due to the fact that not only frames per second, but also other perfromance aspects like total execution time are measured, the lower performing devices can also be compared to each other. All test results can also be normalized by showing a percentage of how much the performance changed across all iterations.
 
 \subsection{Testing devices}
+
+The number of test devices should be as high as possible while still being reasonable regarding to the effort it takes to process all resulting benchmark data.
 
 A set of 60 hertz monitor devices but also a few 144 hertz monitor devices. How to normalize results.
 
