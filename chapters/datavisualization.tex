@@ -18,13 +18,13 @@ The obvious question "Why do I even need a combination of D3 and React if I coul
 
 To be able to test multiple prototypes, one crucial aspect of the project is the force simulation builder setup. All prototypes are built on top of the simulation builder module. The module contains a few D3 specific methods that allow developers to build their own individual force simulation prototypes. All prototypes can reuse some of the already existing methods, and some new custom methods can be implemented as well.
 
-By implementing a force simulation builder module, it is possible to ensure that all prototype D3 simulations are initialized and updated the same way. The most interesting code snippet of the module can be seen in \ref{prog:forceBuildModule}. Individual building blocks of the simulation can be piped together because the module uses a functional approach. Lines 12, 21 and 30 show how the updater functions for the 3 prototypes are composed together by using smaller force simulation function blocks.
+By implementing a force simulation builder module, it is possible to ensure that all prototype D3 simulations are initialized and updated the same way. The most interesting code snippet of the module can be seen in \ref{prog:forceBuildModule}. Individual building blocks of the simulation can be piped together because the module uses a functional approach. Lines \ref{line:updater1}, \ref{line:updater2} and \ref{line:updater3} show how the updater functions for the 3 prototypes are composed together by using smaller force simulation function blocks.
 
 The most important function in the module of course is the \texttt{buildForceSimulation()} method in line 42 in \ref{prog:forceBuildModule}. The options parameter has to contain a type, which is used to determine what updater function is applied to the force simulation. The functional switch case statement on line 36 in \ref{prog:forceBuildModule} decides based on the type which updater function to return. The builder function returns an instance of a D3 force simulation and the associated updater function that can be used by each prototype to update the simulation if the data changes.
 
-Another interesting aspect of the code snippet in \ref{prog:forceBuildModule} is that the functional compositions can be nested. Lines 1 and 7 show the composition of two functions that in turn can then be composed with all three force simulation variants. Even though they are piped together, the result can then be piped again into every updater function composition as shown in lines 16, 25, and 32 for example where the \texttt{applyForceHandlers} composed method is piped into the updater functions of the different prototypes. Again, the way the updater function composition is implemented ensures the equality of the force simulation initialization of all 3 prototypes.
+Another interesting aspect of the code snippet in \ref{prog:forceBuildModule} is that the functional compositions can be nested. Lines \ref{line:composition1} and \ref{line:composition2} show the composition of two functions that in turn can then be composed with all three force simulation variants. Even though they are piped together, the result can then be piped again into every updater function composition as shown in lines \ref{line:applyForce1}, \ref{line:applyForce2}, and \ref{line:applyForce3} for example where the \texttt{applyForceHandlers} composed method is piped into the updater functions of the different prototypes. Again, the way the updater function composition is implemented ensures the equality of the force simulation initialization of all 3 prototypes.
 
-Of course, since all 3 prototypes work fundamentally different, some custom apply functions have to be implemented to ensure the functionality of all 3 prototypes. Applying the custom functions is no problem, as all updater functions are functional compositions. If some custom method has to be added, it can just be applied to the function composition of the associated prototype. Line 23 in \ref{prog:forceBuildModule} shows how a custom node reference applying function is composed into the updater function.
+Of course, since all 3 prototypes work fundamentally different, some custom apply functions have to be implemented to ensure the functionality of all 3 prototypes. Applying the custom functions is no problem, as all updater functions are functional compositions. If some custom method has to be added, it can just be applied to the function composition of the associated prototype. Line \ref{line:applyNewRefs} in \ref{prog:forceBuildModule} shows how a custom node reference applying function is composed into the updater function.
 
 Each prototype implements the same API interface and receives its data via props. All visualization data and each setting parameter, therefore, has to be passed to the prototype component via React component props. Using props also means that the data and the settings must be updateable. The parent container which renders a prototype component must be able to update the prototype's data by just passing different props. The newly applied props, as a consequence, have to be handled correctly in each prototype individually.
 
@@ -32,38 +32,38 @@ Each prototype implements the same API interface and receives its data via props
 \caption{Simple example of a React component and its usage} 
 \label{prog:forceBuildModule}
 \begin{JsCode}
-const applyForceHandlers = pipeAppliers(
+const applyForceHandlers = pipeAppliers( /+\label{line:composition1}+/
   applyGeneralForce, 
   applyLinkForce, 
   applyCollisionForce
 )
 
-const applyEndHandlers = pipeAppliers(
+const applyEndHandlers = pipeAppliers( /+\label{line:composition2}+/
   applyOnEndHandler, 
   applySimulationReheating
 )
 
-const pureD3Updater = pipeAppliers(
+const pureD3Updater = pipeAppliers( /+\label{line:updater1}+/
   applyNewNodeData,
-  applyPureD3Selection,
+  applyPureD3Selection, /+\label{line:applyPureD3Selection}+/
   applyTickHandler,
-  applyForceHandlers,
+  applyForceHandlers, /+\label{line:applyForce1}+/
   applyDragHandlers,
   applyEndHandlers,
 )
 
-const hybridUpdater = pipeAppliers(
+const hybridUpdater = pipeAppliers( /+\label{line:updater2}+/
   applyNewNodeData,
-  applyNewRefs,
+  applyNewRefs, /+\label{line:applyNewRefs}+/
   applyTickHandler,
-  applyForceHandlers,
+  applyForceHandlers, /+\label{line:applyForce2}+/
   applyDragHandlers,
   applyEndHandlers,
 )
 
-const pureReactUpdater = pipeAppliers(
+const pureReactUpdater = pipeAppliers( /+\label{line:updater3}+/
   applyNewNodeData, 
-  applyForceHandlers, 
+  applyForceHandlers, /+\label{line:applyForce3}+/
   applyEndHandlers
 )
 
@@ -120,13 +120,13 @@ There are 2 component life cycle methods from React that are crucial to this imp
 
 \subsubsection{Implementation details}
 
-Once the component is initialized, the \texttt{componentDidMount()} lifecycle method directly calls the initializer function which can be seen on line 1 in the code snippet in \ref{prog:pureD3InitFn}. The initializing function appends the base \texttt{<g>} tag and also handles the translation of the current height and width of the component. Then the \texttt{buildForceSimulation()} function is called with the current options and parameters in order to get the simulation and the correct updater function. Note how the simulation type is passed to the builder function as well. The resulting simulation and updater function is then saved in the current component.
+Once the component is initialized, the \texttt{componentDidMount()} lifecycle method directly calls the initializer function which can be seen on line \ref{line:initGraphFn} in the code snippet in \ref{prog:pureD3InitFn}. The initializing function appends the base \texttt{<g>} tag and also handles the translation of the current height and width of the component. Then the \texttt{buildForceSimulation()} function is called with the current options and parameters in order to get the simulation and the correct updater function. Note how the simulation type is passed to the builder function as well. The resulting simulation and updater function is then saved in the current component.
 
 \begin{program}
 \caption{Pure D3 force graph initializing function}
 \label{prog:pureD3InitFn}
 \begin{JsCode}
-initGraph = () => {
+initGraph = () => { /+\label{line:initGraphFn}+/
   const { width, height, onSimulationStart } = this.props
 
   onSimulationStart()
@@ -142,15 +142,15 @@ initGraph = () => {
     ...simOptions,
   })
 
-  this.simulation = simulation
-  this.updateSimulation = updateSimulation
+  this.simulation = simulation /+\label{line:thisContext1}+/
+  this.updateSimulation = updateSimulation /+\label{line:thisContext2}+/
 }
 \end{JsCode}
 \end{program}
 
-What is also worth mentioning is the fact, that the simulation and the updating function are saved directly to the \texttt{this} context as seen in line 12 of the code snippet in \ref{prog:d3forceinit}. As stateful components are just plain JavaScript classes, they're capable of having member variables as well. It is of utmost importance not to confuse member variables with React's component state, as React is agnostic to class member variables. React not noticing the member variables is a wanted effect in this case, as the simulation and the updater function have to be saved in the component without React going through a new render cycle. 
+What is also worth mentioning is the fact, that the simulation and the updating function are saved directly to the \texttt{this} context as seen in lines \ref{line:thisContext1} and \ref{line:thisContext2} of the code snippet in \ref{prog:pureD3InitFn}. As stateful components are just plain JavaScript classes, they're capable of having member variables as well. It is of utmost importance not to confuse member variables with React's component state, as React is agnostic to class member variables. React not noticing the member variables is a wanted effect in this case, as the simulation and the updater function have to be saved in the component without React going through a new render cycle. 
 
-Looking at the code in \ref{prog:pureD3updateApply}, the update applying functionality can be seen very well. If given a current simulation object, the function handles all newly entering, transitioning, and exiting nodes accordingly. Even an animation is applied. Each time, the pure D3 react component has goes through the \texttt{componentDidUpdate()} function, the \texttt{applyNodeUpdateCycle()} function is called as well. The force simulation building module can take in the updater function from the example in \ref{prog:pureD3updateApply} and composes it directly into the updating function as seen in line 14 in \ref{prog:forceBuildModule}.
+Looking at the code in \ref{prog:pureD3updateApply}, the update applying functionality can be seen very well. If given a current simulation object, the function handles all newly entering, transitioning, and exiting nodes accordingly. Even an animation is applied. Each time, the pure D3 react component has goes through the \texttt{componentDidUpdate()} function, the \texttt{applyNodeUpdateCycle()} function is called as well. The force simulation building module can take in the updater function from the example in \ref{prog:pureD3updateApply} and composes it directly into the updating function as seen in line \ref{line:applyPureD3Selection} in \ref{prog:forceBuildModule}.
 
 \begin{program}[th]
 \caption{Function that applies the data update to D3 on data changes}
@@ -231,7 +231,7 @@ The pure React force graph implementation is far more complicated than the pure 
 
 As figure \ref{fig:pureReactLifecycle} shows, the complete presentation layer is handled by React itself. The whole SVG component tree is therefore completely rendered by React. The figure also demonstrates how the data is handled not only in the component's constructor but also in its \texttt{shouldComponentUpdate()} lifecycle method. As mentioned in the previous chapter \ref{cha:react}, the constructor is the first lifecycle method that is executed in any React component. The pure react prototype takes advantage of that fact and initializes the complete D3 force simulation before any data is rendered. The \texttt{shouldComponentUpdate()} lifecycle is used to determine if the component's props have changed and possibly apply an update to the D3 force simulation.
 
-The key to the integration of D3 into React's render cycle is the tick function on the D3 force simulation. Every time the tick function is executed, the applied tick handler then queries the force simulation data, fetches all link and node positions, calculates the current position and then pass the newly calculated data to the React component again via a `setState()` call. Figure \ref{fig:pureReactLifecycle} demonstrates how the data flows back into the component again after each tick cycle of the force simulation.
+The key to the integration of D3 into React's render cycle is the tick function on the D3 force simulation. Every time the tick function is executed, the applied tick handler then queries the force simulation data, fetches all link and node positions, calculates the current position and then pass the newly calculated data to the React component again via a \texttt{setState()} call. Figure \ref{fig:pureReactLifecycle} demonstrates how the data flows back into the component again after each tick cycle of the force simulation.
 
 Keeping all node and link positions in the React component state, as a result, unlocks full control to the presentation layer. Thus, React acting as a function of state can completely handle each element in the force simulation. The component state includes not only appearance properties like background or stroke color but also exact node and link positions. As a consequence, the data has to pass the complete rendering cycle of React on every tick execution, including the reconciliation phase, which can lead to poor rendering performance. Not only does it take time for D3 to calculate a new version of the force data each tick, but also React then has to process the whole new data tree. If the simulation contains a high number of nodes, the whole rendering process, which figure \ref{fig:pureReactLifecycle} shows, can massively impact performance as described later in chapter \ref{cha:performance}.
 
@@ -474,17 +474,3 @@ Finally, the benchmark tool has to be easy to use on all kinds of devices. The t
   \caption{The benchmark currently iterating through hybrid prototype iterations}
   \label{fig:reactD3bench2}
 \end{figure}
-
-\subsection{Testing methodologies}
-
-Running the benchmarks to get valid and scientific testing results is relatively straight forward. To get the most declarative performance numbers it is best to mainly use devices with a high monitor refresh rate. Devices with a low monitor refresh rate can possibly falsify some testing results. If for example a browser could possibly yield 100 FPS on an iteration, the system would only be able to measure a maximum of 60FPS. The theoretically possible 100 FPS would be capped to the monitor's 60 hertz refresh rate.
-
-Devices with high refresh rates can be perfect to measure the best performing prototype. One of the more interesting research aspects of the thesis though is the question, how well the prototypes perform on mobile devices with lower performance specifications than desktop PCs. Thus the testing results must be split up into different categories as a consequence. Due to the fact that not only frames per second, but also other perfromance aspects like total execution time are measured, the lower performing devices can also be compared to each other. All test results can also be normalized by showing a percentage of how much the performance changed across all iterations.
-
-\subsection{Testing devices}
-
-The number of test devices should be as high as possible while still being reasonable regarding to the effort it takes to process all resulting benchmark data.
-
-A set of 60 hertz monitor devices but also a few 144 hertz monitor devices. How to normalize results.
-
-What devices did i benchmark my prototypes on?
