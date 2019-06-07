@@ -387,6 +387,7 @@ The benefit of the hybrid implementation is that React can handle the node and l
 The rendering performance is quite sure close to a pure D3 implementation, as React has to render the nodes for the simulation only once every data update. D3 then takes over by altering the positions on the actual DOM nodes via its internal ticking function. Technically there is no difference between rendering the initial nodes and links of a force graph via React or D3 as the DOM nodes have to be committed nevertheless. D3's force simulation tick cycles then directly alter the position attributes of the DOM SVG nodes. React is agnostic of D3 being hooked into the DOM nodes, as the component only updates if the outside data changes. When the parent passes new simulation data, the simulation is fully updated in any case. Final numbers on performance are elaborated in chapter \ref{cha:performance} though.
 
 \subsubsection{Disadvantages}
+\label{subsub:hybridDisadvantages}
 
 A significant disadvantage of the hybrid prototype is that it might be unclear to maintainers of the library that D3 handles the positions of the nodes and links and not React. Of course, documenting the positioning aspect could be a solution to the problem. Writing proper documentation is not only time but also resource consuming for maintainers. New maintainers of the library would have to completely understand how the hybrid combination of React and D3 works to start being productive on the library.
 
