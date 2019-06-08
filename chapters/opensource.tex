@@ -13,7 +13,7 @@ Furthermore, the code should be hosted on a public collaboration platform. The b
 
 The usage of the react component should be as easy and straigt forward as possible to enable developers an easy starting point to using the component. The API should be designed in a way, that programmers can incrementally opt into more complicated features. By simply using the component with the standard required props, a standard D3 force simulation should be rendered. After going through the documentation and the tutorial, developers should also be able to gracefully opt into the more complicated features of the component like custom node and link rendering.
 
-As mentioned in \ref{subsub:hybridDisadvantages} a big disadvantage of the hybrid component is the fact, that developers must understand how the hybrid implementation works in order to being able to start contributing to the open source component. The library should therefore have a very elaborated and well written contribution documentation to make it easier to contribute to the component.
+As mentioned in section \ref{subsub:hybridDisadvantages}, a big disadvantage of the hybrid component is the fact, that developers must understand how the hybrid implementation works in order to being able to start contributing to the open source component. The library should therefore have a very elaborated and well written contribution documentation to make it easier to contribute to the component.
 
 \section{Technical details of the component API}
 
@@ -71,3 +71,7 @@ const CustomForceGraph = ({ height, width, nodes, links }) => (
 \end{program}
 
 The code example in \ref{prog:customForceGraph} demonstrates really well, how the graceful opt-in strategy of the API works. The example does not use every possible prop that can be added to the force graph like demonstrated in the code example in \ref{prog:hybridForceGraphComponentAPI}. The implementation of the custom graph omits the \texttt{forceOptions} prop for example. The hybrid force graph component falls back to the standard force simulation configuration as a result. The custom link render function prop is also omitted as the default link implementation is sufficient for the custom force graph.
+
+\section{Final thoughts}
+
+In the end only time will tell, if the component is useful for the community once it is published and if there are some open source developers willing to contribute to the project. Due to fact that the force graph component is already utilized in at least one production project the library component is already a success.

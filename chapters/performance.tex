@@ -1,7 +1,67 @@
 \chapter{Performance Testing and user perception}
 \label{cha:performance}
 
+The research question of the thesis is, if React can be combined with D3 without losing any performance in the browser. The following sections intoduce the reader not only to the benchmark setup and testing methodologies, but also to the final results of the benchmarks. There is also a discussion which elaborates all test results. Since humans cannot measure the exact amount of frames per second, a special section introduces the reader to the human perception of fluid animations and how the testing results can be interpreted even further with that knowledge.
+
+\section{Test environment setup}
+
+This section describes the testing environment that was implemented to compare the three force simulation component prototypes. There are a few challenges that had to be taken into account when realizing the testing environment. Also, the implementation details are elaborated and explained. Last but not least, the testing devices are introduced which are used to run the benchmark.
+
+\subsection{Challenges}
+
+One of the most challenging aspects of the thesis project is the performance measurement of the prototypes. Modern browsers have an uncountable amount of features that help to smooth out the performance to improve user perception. Getting some consistent performance numbers is much harder due to inconsistent browser optimizations. Using different browsers for benchmarks also means that different JavaScript runtimes are used to run the benchmarks. All engines have different execution and parsing speeds. Also, the mechanism to speed up frequently accessed script code is different, which also makes it harder to get consistent performance numbers.
+
+When benchmarking web applications, it is very complicated to get performance values that have scientific relevance, which can be compared to get some accurate research results. The next section introduces a system that was primarily implemented to measure the performance of JavaScript web applications. The system tries to tackle all challenges to produce detailed benchmark results.
+
+Another big problem is the fact that browsers detect the refresh rate of monitors when utilizing the request animation frame functionality. Monitors with a refresh rate of 144 hertz allow browsers to produce up to 144 frames per second. 60-hertz monitors, on the other hand, limit the browser's framerate to 60 FPS. The maximum amount of animation frame executions in any browser can only ever go up to the monitor's amount of hertz the browser window is running in. 
+
+Speaking of utilizing the request animation frame functionality, it must be mentioned that each browser has a different implementation of the functionality. The Chrome browser, for example, is smoothing out the performance by trying to executing animation frames regularly, which means that the overall performance might be lowered to achieve a smoother framerate. Experience shows that Firefox, on the other hand, always fires its animation frames whenever a frame is available, which can result in higher overall but not as consistent framerates.
+
+Last but not least, another challenge was to build a performance measuring environment that can be used without adding code to the prototypes. Theoretically, each prototype should be a complete component that can be shipped as a third party library. By adding performance measurement specific code, the components would contain functionality that is not needed when shipping production builds of the components.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1\columnwidth]{testresults}
+  \caption{Hybrid prototype benchmark results}
+  \label{fig:reactD3benchResult}
+\end{figure}
+
+\subsection{Building a stable Testing Environment}
+\label{sub:perfImplDetails}
+
+A testing environment which produces consistent data input across multiple iterations yields the best testing results when benchmarking all three prototypes. Testing the force simulation prototypes with the same data across multiple benchmarks, environments, and devices is of utmost importance. A valid solution is to use a pseudo-random data generator which can be restarted and reseeded each benchmark iteration.
+
+Generating an arbitrary amount of random node and link positions is not a problem, as JavaScript has a built-in random generator which can be utilized to generate random data. Unfortunately, JavaScript's random generator cannot be seeded to achieve consistent pseudo-random results. The library \emph{seedrandom} in \cite{SeedRandom} is the perfect technology to solve the problem of generating consistent data across multiple iterations of the benchmark tests.
+
+Since browsers frequently yield different performance numbers across iterations with identical data, the amount cycle per test data iterations sets has to be increased. When testing one specific iteration multiple times, the average value has much more significance than testing an iteration only once. Therefore the testing environment must have support for different iteration configurations, which can be run an arbitrary amount of times.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\columnwidth]{reactd3bench}
+  \caption{Overview of the benchmark application}
+  \label{fig:reactD3bench1}
+\end{figure}
+
+The testing environment is designed to be a stateful container which generates some random data and then passes it to the desired prototype. D3 simulations provide a mechanism to add an event handler whenever the simulation stops. It is, therefore, no problem to pass a handler to the benchmark component that is executed whenever the simulation stops. The handler can be used to restart the benchmark with some newly generated data until the desired amount of benchmark iteration cycles is reached.
+
+Pseudo-random generated data is obtained by a specially implemented custom helper utility module. The custom module is designed to generate a specified amount of random nodes and links. The method to generate random data takes two parameters -- the number of nodes and the number of links. Generating consistent pseudo-random data is possible by internally using the previously mentioned seedrandom module.
+
+Tackling the performance measurement problem is a much harder task, however. To be able to measure the number of frames per second, the request animation browser functionality can be used. Another custom implemented module provides some functionality that is specifically designed to measure performance intensive JavaScript animations. By requesting an animation frame as often as possible in a terminable infinite loop, a reference timestamp can be used to measure the amount of animation frame executions per seconds which is equal to the frames per second the browser produces.
+
+Presenting the performance results mustn't be underestimated either. To provide benchmark results appealingly, each iteration is represented via a visual container that contains all relevant information for a specific test iteration. If there are 6 test iterations, 6 containers are rendered after the benchmark. The containers contain the number of cycle per iteration, the test configuration, the number of frames per second, the overall execution time per cycle, the average frame time, and also the highest frame time. Figure \ref{fig:reactD3benchResult} shows how the benchmark results visually look like.
+
+Finally, the benchmark tool has to be easy to use on all kinds of devices. The thesis project also contains a small React application which can be deployed on any static web hosting service that can serve single page applications. A visual representation of the basic benchmark app can be seen in figure \ref{fig:reactD3bench1}. The React application is a wrapper around the testing environment, which lets users select the desired benchmark for any of the three force simulation prototypes and then runs it in the browser. Each benchmark also has an easily distinguishable URL to be able to copy paste a specific benchmark URL into any browser. Figures \ref{fig:reactD3bench1} and \ref{fig:reactD3bench2} show how the URL contains all relevant benchmark parameters. That way the benchmark URLs can be pasted into any browser to execute the benchmark. 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.6\columnwidth]{reactd3bench1}
+  \caption{The benchmark currently iterating through hybrid prototype iterations}
+  \label{fig:reactD3bench2}
+\end{figure}
+
 \section{Testing setup}
+
+Having a bulletproof testing setup plays a fundamental role in producing scientifically releveant test results. Therefore, the following sections of the thesis provide a thorough insight on the testing devices and on how the whole benchmark methodology is conceptionalized. 
 
 \subsection{Testing devices}
 
@@ -34,16 +94,16 @@
         Snapdragon 835 & 
         Adreno 540  & 
         8GB \\
-        \hline
-        Samsung G\tnote{1} \hspace{0.1mm} S8 & 
-        Exynos 8895 & 
-        Mali-G71 MP20 & 
-        4GB \\
-        \hline
-        Samsung GT\tnote{2} \hspace{0.1mm} A10.1 &
-        Exynos 7870 & 
-        Mali-T830 MP2 & 
-        3GB \\
+        %%\hline
+        %%Samsung G\tnote{1} \hspace{0.1mm} S8 & 
+        %%Exynos 8895 & 
+        %%Mali-G71 MP20 & 
+        %%4GB \\
+        %%\hline
+        %%Samsung GT\tnote{2} \hspace{0.1mm} A10.1 &
+        %%Exynos 7870 & 
+        %%Mali-T830 MP2 & 
+        %%3GB \\
         \hline
         SurfaceBook & 
         Intel i5-6300U & 
@@ -52,18 +112,18 @@
         \hline
       \end{tabular}  
     \end{english}
-    \begin{tablenotes}
-    \item [1] Galaxy
-    \item [2] Galaxy Tab
-    \end{tablenotes}
+    %%\begin{tablenotes}
+    %%\item [1] Galaxy
+    %%\item [2] Galaxy Tab
+    %%\end{tablenotes}
   \end{threeparttable}
 \end{table}
 
-The amount of test devices should be as high as possible while still being reasonable regarding to the effort it takes to process all resulting benchmark data. A total amount of 10 devices is enough to retrieve scientifically significant results. The range of devices is divided into 2 sections: high-end devices and low-end devices. 
+The amount of test devices should be as high as possible while still being reasonable regarding to the effort it takes to process all resulting benchmark data. A total amount of 6 devices is enough to retrieve scientifically significant results. The range of devices is divided into 2 sections: high-end devices and low-end devices. 
 
-The mobile devices used for testing are a OnePlus 1 phone, a OnePlus 5t phone, a Samsung Galaxy S8 phone, a SurfaceBook in tablet mode and a Samsung Galaxy Tab. All low-end devices and their specs are listed in table \ref{tab:lowendTestingDevices}. It must be noted, that every selected low-end device has a monitor refresh rate of 60-hertz. 
+The mobile devices used for testing are a OnePlus 1 phone, a OnePlus 5t phone, and a SurfaceBook in tablet mode. All low-end devices and their specs are listed in table \ref{tab:lowendTestingDevices}. It must be noted, that every selected low-end device has a monitor refresh rate of 60-hertz. 
 
-The table \ref{tab:highendTestingDevices} shows all high-end devices which have a monitor refresh rate of 144-hertz. It must be noted, that there are several custom tower builds with custom specs and one laptop with specs defined by its manufacturer. All in all the devices should provide a good overview of the performance of the force graph components.
+The table \ref{tab:highendTestingDevices} introduces all high-end devices which have a monitor refresh rate of 144-hertz. Two of the listed devices are custom tower builds with custom specs and one device is a the Razer Blade 15 laptiop with specs defined by its manufacturer. All in all the devices should provide a good overview of the performance of the force graph components.
 
 \begin{table}
   \centering
@@ -94,21 +154,21 @@ The table \ref{tab:highendTestingDevices} shows all high-end devices which have 
         Intel i7-8750H & 
         Nvidia GTX 1070 Max-Q  & 
         16GB \\
-        \hline
-        Tower (Max J.) & 
-        Intel i7-7700k & 
-        Nvidia GTX 1070 & 
-        16GB \\
+        %%\hline
+        %%Tower (Max J.) & 
+        %%Intel i7-7700k & 
+        %%Nvidia GTX 1070 & 
+        %%16GB \\
         \hline
         Tower (Patrick M.) &
         Intel i7-6700k & 
         Nvidia GTX 1080 & 
-        3GB \\
-        \hline
-        Tower (Julian J.) & 
-        Intel i7-7700k & 
-        Nvidia GTX 1070 & 
         16GB \\
+        %%\hline
+        %%Tower (Julian J.) & 
+        %%Intel i7-7700k & 
+        %%Nvidia GTX 1070 & 
+        %%16GB \\
         \hline
       \end{tabular}  
     \end{english}
@@ -117,16 +177,6 @@ The table \ref{tab:highendTestingDevices} shows all high-end devices which have 
 
 \subsection{Testing methodologies}
 
-Running the benchmarks to get valid and scientific testing results is relatively straight forward. To get the most declarative performance numbers it is best to mainly use devices with a high monitor refresh rate. Devices with a low monitor refresh rate can possibly falsify some testing results. If for example a browser could possibly render 100 frames per second on an iteration, a system with a 60-hertz monitor would only be able to measure a maximum of 60FPS as the theoretically possible 100 FPS would be capped to the monitor's 60-hertz refresh rate.
-
-Devices with high refresh rates can be sufficient for measuring the best performing prototype. One of the more interesting research aspects of the thesis though is the question, how well the prototypes perform on mobile devices with lower performance specifications than desktop PCs. Thus the testing results must be split up into different categories as a consequence. Due to the fact that not only frames per second, but also other perfromance aspects like total execution time are measured, the lower performing devices can also be compared to each other. All test results can also be normalized by showing a percentage of how much the performance changed across all iterations.
-
-Each device runs through 6 iterations with exponentially increasing render difficulty. Each iteration runs through 10 cycles which equals a grand total of 60 cycles per browser and device combination. Five high-end devices with 144-hertz monitors and the five low-end devices with 60-hertz monitors run the benchmark iterations in the Chrome and in the Firefox browser. The two browsers were selected, because they're the most significantly used brwosers worldwide according to various statistics. 
-
-\section{Benchmark Results}
-
-\subsection{Introducing the test results}
-
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 5cm 4cm 5cm, clip, width=1\columnwidth]{perfIterations.pdf}
@@ -134,65 +184,93 @@ Each device runs through 6 iterations with exponentially increasing render diffi
 \label{fig:perfIterations}
 \end{figure}
 
+Running the benchmarks to get valid and scientific testing results is relatively straight forward. To get the most declarative performance numbers it is best to mainly use devices with a high monitor refresh rate. Devices with a low monitor refresh rate can possibly falsify some testing results. If for example a browser could possibly render 100 frames per second on an iteration, a system with a 60-hertz monitor would only be able to measure a maximum of 60FPS as the theoretically possible 100 FPS would be capped to the monitor's 60-hertz refresh rate.
+
+Devices with high refresh rates can be sufficient for measuring the overall best performing prototype. One of the more interesting research aspects of the thesis though is the question, how well the prototypes perform on mobile devices with lower performance specifications than desktop PCs. Thus the testing results must be split up into different categories as a consequence. Due to the fact that not only frames per second, but also other perfromance aspects like total execution time are measured, the lower performing devices can also be compared to each other.
+
+Each device runs through 6 iterations per prototype with exponentially increasing render difficulty. Figure \ref{fig:perfIterations} shows the benchmark configuration for the benchmark. Starting with a node count of 10 and a link count of five, the configuration ultimately goes up to 1000 nodes and 500 links. The third iteration is special, as the number of nodes and links is the same. The special configuration was added to test an extreme scenario of all nodes being connected to each other to induce some extra performance heavy force calculations.
+
+Each iteration runs through 10 cycles which equals a grand total of 60 cycles per prototype, browser, and device combination. Three high-end devices with 144-hertz monitors and the three low-end devices with 60-hertz monitors run the benchmark iterations in the Chrome and in the Firefox browser. The two browsers were selected, because they're the most significantly used, platform independent brwosers worldwide according to the statistics in \cite{StatCounterBrowserMarketShare} and \cite{W3CBrowserMarketShare}. Taking into account that there are 6 devices, 3 prototypes, and 2 browsers, the total number of iterations is 36 and the total number of iteration cycles is 360 as every iteration has 10 cycles.
+
+\section{Benchmark Results}
+
+This section answers the research question if React can be combined with React without introducing any performance losses in the browser. Extensive benchmark testing sessions resulted in some interesting research results which are presented below. After presenting the test results, an introduction to the human perception of fluid animations helps the reader to follow the subsequent interpretation of the benchmark results.
+
+\subsection{Introducing the test results}
+
+The total benchmark execution time is exactly 25326ms when combining the average execution time of each iteration cycle. When converting milliseconds to hours the result is 7.04 hours. Since the benchmark environment was designed for extensive benchmark sessions, the time between running the benchmarks was minimized. The only tedious and most actively time consuming task was to write down the actual benchmark results. Letting devices run the tests required no further user interaction. 
+
+Starting off with the low-end devices, figure \ref{fig:perfLowEnd001} shows the average FPS of the low end devices. An overall downwards trend can immediately seen in the FPS chart which is expected of course as the more DOM nodes the browsers have to calculate, the lower the FPS get per iteration. Each group of bars in the chart represents an average value for each prototype per benchmark iteration. Note, that all values are the average taken from 10 iteration cycles of the chrome and the firefox browser. The prototypes mostly yielded the expected performance numbers starting with the reference performance of the pure D3 protype, followed by the hybrid component and then finally followed by the pure React force graph component.
+
 \begin{figure}
 \centering
-\includegraphics[scale=2.5, trim= 4cm 4cm 4cm 4cm, clip, width=1\columnwidth]{perfLowEnd001.pdf}
-\caption{Average frames per second per benchmark iteration cycle}
+\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd001.pdf}
+\caption{Low-end devices' average frames per second per benchmark iteration cycle}
 \label{fig:perfLowEnd001}
 \end{figure}
 
+Following up with the high-end devices, figure \ref{fig:perfHighEnd001} shows the average FPS values of the high-end benchmark iterations. Looking at the bar chart, it is apparent that the high end devices hit the fps cap of 144FPS throughout the first few iterations. As mentioned before, the devices would have been able to put out a higher number of frames per second but were limited to the browsers animation frame functionality which is limited to the devices' monitor refresh rate. Beginning from the third iteration, a steady decrease of FPS can observed though, as the iteration difficulty is high enough for all devices to not hit the monitor refresh rate limit anymore.
+
 \begin{figure}
 \centering
-\includegraphics[scale=2.5, trim= 4cm 4cm 4cm 4cm, clip, width=1\columnwidth]{perfLowEnd002.pdf}
-\caption{Average time to complete for one benchmark iteration cycle in milliseconds}
+\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd001.pdf}
+\caption{High-end devices' average frames per second per benchmark iteration cycle}
+\label{fig:perfHighEnd001}
+\end{figure}
+
+The bar chart in \ref{fig:perfLowEnd002} show the average time it took to fully complete the benchmark. Via the browsers' performance API exact timestamps can be measured once a benchmark cycle starts and once it ends. By subtracting the start timestamp from the end timestamp the overall time to execute is calculated. Like the FPS chart, the time to complete chart also shows all average values it took the different prototypes to fully complete the benchmark cycles.
+
+\begin{figure}
+\centering
+\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd002.pdf}
+\caption{Low-end devices' average time to complete for one benchmark iteration cycle in milliseconds}
 \label{fig:perfLowEnd002}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[scale=2.5, trim= 4cm 4cm 4cm 4cm, clip, width=1\columnwidth]{perfLowEnd003.pdf}
-\caption{Average frametime per benchmark iteration cycle}
-\label{fig:perfLowEnd003}
-\end{figure}
+Measuring the average frame time of animations can give insights to the user's perception of a fluid animation. If the value is too high, the animation may not be experienced as a smooth animation. Therefore measuring the value is crutial when comparing the prototypes to each other. Figure \ref{fig:perfLowEnd003} shows a barchart of the low-end device benchmark. 
 
 \begin{figure}
 \centering
-\includegraphics[scale=2.5, trim= 4cm 4cm 4cm 4cm, clip, width=1\columnwidth]{perfLowEnd004.pdf}
-\caption{Average maximum frametime per benchmark iteration cycle}
+\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd003.pdf}
+\caption{Low-end devices' average frame time per benchmark iteration cycle}
+\label{fig:perfLowEnd003}
+\end{figure}
+
+Last but not least a critical aspect of any animation performance measurement is the maximum time between frames measured. The value can provide critical insights to some performance issues even tough the average frame time per second might look fine. The chart in \ref{fig:perfLowEnd004} shows an average of the maximum frame time value to each iteration cycle.
+
+\begin{figure}
+\centering
+\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd004.pdf}
+\caption{Low-end devices' average maximum frame time per benchmark iteration cycle}
 \label{fig:perfLowEnd004}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[scale=2.5, trim= 4cm 4cm 4cm 4cm, clip, width=1\columnwidth]{perfHighEnd001.pdf}
-\caption{Average frames per second per benchmark iteration cycle}
-\label{fig:perfHighEnd001}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[scale=2.5, trim= 4cm 4cm 4cm 4cm, clip, width=1\columnwidth]{perfHighEnd002.pdf}
-\caption{Average time to complete for one benchmark iteration cycle in milliseconds}
+\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd002.pdf}
+\caption{High-end devices' average time to complete for one benchmark iteration cycle in milliseconds}
 \label{fig:perfHighEnd002}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[scale=2.5, trim= 4cm 4cm 4cm 4cm, clip, width=1\columnwidth]{perfHighEnd003.pdf}
-\caption{Average frametime per benchmark iteration cycle}
+\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd003.pdf}
+\caption{High-end devices' average frame time per benchmark iteration cycle}
 \label{fig:perfHighEnd003}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[scale=2.5, trim= 4cm 4cm 4cm 4cm, clip, width=1\columnwidth]{perfHighEnd004.pdf}
-\caption{Average maximum frametime per benchmark iteration cycle}
+\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd004.pdf}
+\caption{High-end devices' average maximum frame time per benchmark iteration cycle}
 \label{fig:perfHighEnd004}
 \end{figure}
 
 \subsection{Human Perception of fluid animations}
 
 \subsection{Interpreting the test results}
+
+In general high-end devices had a much lower overall execution time than the low-end devices, which is not entirely tied to the hardware, as 60-herz screens can also be a limiting factor.
 
 \section{Conclusion}
 
