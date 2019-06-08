@@ -205,70 +205,86 @@ Starting off with the low-end devices, figure \ref{fig:perfLowEnd001} shows the 
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd001.pdf}
-\caption{Low-end devices' average frames per second per benchmark iteration cycle}
+\caption{Low-end devices' average frames per second per benchmark iteration cycle (higher is better)}
 \label{fig:perfLowEnd001}
 \end{figure}
 
-Following up with the high-end devices, figure \ref{fig:perfHighEnd001} shows the average FPS values of the high-end benchmark iterations. Looking at the bar chart, it is apparent that the high end devices hit the fps cap of 144FPS throughout the first few iterations. As mentioned before, the devices would have been able to put out a higher number of frames per second but were limited to the browsers animation frame functionality which is limited to the devices' monitor refresh rate. Beginning from the third iteration, a steady decrease of FPS can observed though, as the iteration difficulty is high enough for all devices to not hit the monitor refresh rate limit anymore.
+Following up with the high-end devices, figure \ref{fig:perfHighEnd001} shows the average FPS values of the high-end benchmark iterations. Looking at the bar chart, it is apparent that the high end devices hit the fps cap of 144FPS throughout the first few iteration cycles. As mentioned before, the devices would have been able to put out a higher number of frames per second but were limited to the browsers animation frame functionality which is in itself limited to the devices' monitor refresh rate. Beginning from the third iteration, a steady decrease of FPS can observed though, as the iteration difficulty is high enough for all devices to not hit the monitor refresh rate limit anymore.
+
+%% linear decrease but exponential difficulty???
 
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd001.pdf}
-\caption{High-end devices' average frames per second per benchmark iteration cycle}
+\caption{High-end devices' average frames per second per benchmark iteration cycle (higher is better)}
 \label{fig:perfHighEnd001}
 \end{figure}
 
-The bar chart in \ref{fig:perfLowEnd002} show the average time it took to fully complete the benchmark. Via the browsers' performance API exact timestamps can be measured once a benchmark cycle starts and once it ends. By subtracting the start timestamp from the end timestamp the overall time to execute is calculated. Like the FPS chart, the time to complete chart also shows all average values it took the different prototypes to fully complete the benchmark cycles.
+The bar chart in \ref{fig:perfLowEnd002} shows the average time it took to fully complete the benchmark. Via the browsers' performance API exact timestamps can be measured once a benchmark cycle starts and once it ends. By subtracting the start timestamp from the end timestamp the overall time to execute is calculated. Like the FPS chart, the time to complete chart also shows all average values it took the different prototypes to fully complete the benchmark cycles.
 
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd002.pdf}
-\caption{Low-end devices' average time to complete for one benchmark iteration cycle in milliseconds}
+\caption{Low-end devices' average time to complete for one benchmark iteration cycle in milliseconds (lower is better)}
 \label{fig:perfLowEnd002}
 \end{figure}
 
-Measuring the average frame time of animations can give insights to the user's perception of a fluid animation. If the value is too high, the animation may not be experienced as a smooth animation. Therefore measuring the value is crutial when comparing the prototypes to each other. Figure \ref{fig:perfLowEnd003} shows a barchart of the low-end device benchmark. 
-
-\begin{figure}
-\centering
-\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd003.pdf}
-\caption{Low-end devices' average frame time per benchmark iteration cycle}
-\label{fig:perfLowEnd003}
-\end{figure}
-
-Last but not least a critical aspect of any animation performance measurement is the maximum time between frames measured. The value can provide critical insights to some performance issues even tough the average frame time per second might look fine. The chart in \ref{fig:perfLowEnd004} shows an average of the maximum frame time value to each iteration cycle.
-
-\begin{figure}
-\centering
-\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd004.pdf}
-\caption{Low-end devices' average maximum frame time per benchmark iteration cycle}
-\label{fig:perfLowEnd004}
-\end{figure}
+Continuing with the high-end devices, the chart in \ref{fig:perfHighEnd002} shows the average time in milliseconds it took the devices to finish one iteration cycle. The results show, that also the time to complete is capped at a minimum value throughout the first iteration cycles. Since the animation frame performance measurement utility is bound to the browsers' animation frame functionality, being capped at a maximum value also means being restricted on minimum values of course.
 
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd002.pdf}
-\caption{High-end devices' average time to complete for one benchmark iteration cycle in milliseconds}
+\caption{High-end devices' average time to complete for one benchmark iteration cycle in milliseconds (lower is better)}
 \label{fig:perfHighEnd002}
 \end{figure}
+
+Measuring the average frame time of animations can provide insights to the user's perception of a fluid animation. If the value is too high, the animation may not be experienced as a smooth animation. Therefore measuring the value is crutial when comparing the prototypes to each other. Figure \ref{fig:perfLowEnd003} shows a barchart of the low-end device benchmark. Towards the last 2 iterations the benchmark configuration seems to have hit a certain threshold since the values rise exponentially. The other performance show a similar pattern to the previous results though.
+
+\begin{figure}
+\centering
+\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd003.pdf}
+\caption{Low-end devices' average frame time per benchmark iteration cycle (lower is better)}
+\label{fig:perfLowEnd003}
+\end{figure}
+
+Looking at the high end results in \ref{fig:perfHighEnd003} the same problem as before can be observed, where the first iterations are capped to a specific minimum value. The rest of the results increase exponentially though which corelates to the rest of the high-end performance results. The average frame time of the last iteration breaks out and spikes with an exceptionally high value.
 
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd003.pdf}
-\caption{High-end devices' average frame time per benchmark iteration cycle}
+\caption{High-end devices' average frame time per benchmark iteration cycle (lower is better)}
 \label{fig:perfHighEnd003}
 \end{figure}
+
+Last but not least a critical aspect of any animation performance measurement is the maximum time between frames measured. The value can provide critical insights to some performance issues even tough the average frame time per second might look fine. The chart in \ref{fig:perfLowEnd004} shows an average of the maximum frame time value to each iteration cycle. One unanticipated result was, that the maximum frame rate of the hybrid component is significantly higher throughout the testing results than the pure D3 or pure React components.
+
+\begin{figure}
+\centering
+\includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd004.pdf}
+\caption{Low-end devices' average maximum frame time per benchmark iteration cycle (lower is better)}
+\label{fig:perfLowEnd004}
+\end{figure}
+
+However, the performance graph in \ref{fig:perfHighEnd004} shows more expected results. Again, the average maximum frame time rises exponentially. The results contain a few irregularities though. The maximum frame time of the reference pure D3 prototype for example is sometimes higher as the value of the other two prototypes. The maximum frame time values therefore must be taken with a grain of salt, as any maximum value could be falsified by unexpected system or browser activities which could have decreased the overall performance of any prototype. As mentioned before, the problem is mitigated by executing one iteration multiple times, but there is still a margin of error though.
 
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd004.pdf}
-\caption{High-end devices' average maximum frame time per benchmark iteration cycle}
+\caption{High-end devices' average maximum frame time per benchmark iteration cycle (lower is better)}
 \label{fig:perfHighEnd004}
 \end{figure}
 
 \subsection{Human Perception of fluid animations}
 
+%%Humans vision is bad lol, they can only see 13 fps but when do we actually notice some stuttering or laggy animation performance? 
+
+Human vision is a very complicated topic, as there have been studies for years which tried to determine at which point humans percieve a series of images as fluid motion. Another crutial question is at which point an observer doesn't percieve an animation as fluid anymore. As the performance measurements provided definitive numbers, they can be used to determine if the animation of the test can be percieved as fluid motion or not. The answer of most research papers is though, that flickering or a so called "lag" cannot be detected anymore, if the human perception cannot distinguish anymore between modulated light and a stable field. The rate is between 50 and 90 hertz according to serveral articles like \cite{6375944}, \cite{farrell1987predicting} or \cite{stereoscopicFlickerArticle}.
+
+Humans percive motion if the display produces more than 12 frames per second according to \cite{RestorationOfMotionPictureFilm}. Another article in \cite{Potter2014} suggests the same shit
+
 \subsection{Interpreting the test results}
+
+React Move culprit.
 
 In general high-end devices had a much lower overall execution time than the low-end devices, which is not entirely tied to the hardware, as 60-herz screens can also be a limiting factor.
 
