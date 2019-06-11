@@ -1,11 +1,11 @@
-\chapter{Open source and the React community}
+\chapter{Open Source and the React Community}
 \label{cha:opensource}
 
 Ultimately the thesis project was always planned to be an open source project at some point in the future. The current React community is extremely active and productive because of countless open source projects that provide useful libraries that can be used in every project free of charge. As the thesis project is quite the success in terms of the achieved goals and the performance numbers, the overall result should not only be presented in this masters' thesis. Instead the project should be published to the React community who truly benefits from the software.
 
 This chapter is about the publishing plans of the hybrid prototype and what API it should have to provide the most benefit to the users of the component. The thesis project was created out of necessity for a component that would handle a D3 force simulation but can be written in React code. The first versions of the API will probably be very opinionated, as there was a special usecase for the component. Maybe the community will alter the proposed component API in the future though.
 
-\section{Building an open source library component}
+\section{Building an Open Source Library Component}
 
 Conceptionally speaking, if there is a library that ships a single component, the React component has to be somehow packaged and then published to npm\footnote{https://www.npmjs.com/} to be usable by other developers. Since npm is one of the biggest package manager for web projects, the component can be installed in any web project once it has been published to the npm registry. Bundler tools like webpack\footnote{https://webpack.js.org/}, rollup\footnote{https://rollupjs.org}, or parcel\footnote{https://parceljs.org/} make it easy to create static library assets that can be published to npm.
 
@@ -15,7 +15,7 @@ The usage of the react component should be as easy and straigt forward as possib
 
 As mentioned in section \ref{subsub:hybridDisadvantages}, a big disadvantage of the hybrid component is the fact, that developers must understand how the hybrid implementation works in order to being able to start contributing to the open source component. The library should therefore have a very elaborated and well written contribution documentation to make it easier to contribute to the component.
 
-\section{Technical details of the component API}
+\section{Technical Details of the Component API}
 
 \begin{program}
 \caption{Alpha version of the force graph component API}
@@ -35,9 +35,9 @@ As mentioned in section \ref{subsub:hybridDisadvantages}, a big disadvantage of 
 \end{JsCode}
 \end{program}
 
-A draft version of the API was already implemented throught the implementation phase of the master thesis project. The storybook already utilizes the API to show customized versions of the hybrid force graph. The program in \ref{prog:hybridForceGraphComponentAPI} shows, how the component API looks like. There are a few mandatory props like the height and width of the svg element. The nodes and links could be omitted, but it wouldn't make any sense, as the force graph has to get its data from somewhhere. The two data properties are designed to take falsey values in case the data comes from a web API and is not available during the first parent component render cycle. Every prop starting on line \ref{line:optional} and onwards is optional and can be fully customized by the user of the component.
+A draft version of the API was already implemented throught the implementation phase of the master thesis project. The storybook already utilizes the API to show customized versions of the hybrid force graph. The program in \ref{prog:hybridForceGraphComponentAPI} shows, how the component API looks like. There are a few mandatory props like the height and width of the SVG element. The nodes and links could be omitted, but it wouldn't make any sense, as the force graph has to get its data from somewhere. The two data properties are designed to take falsey values in case the data comes from a web API and is not available during the first parent component render cycle. Every prop starting on line \ref{line:optional} and onwards is optional and can be fully customized by the user of the component.
 
-In chapter \ref{cha:visualization} the figure \ref{fig:reactD3stroy} shows a component story of a customized force graph component. The snippet in \ref{prog:customForceGraph} shows the sourcecode for the custom component. Instead of using the default node renderer, a custom node rendering function is used as it can be seen on lines \ref{line:customNodeRenderer} and \ref{line:useCustomNodeRenderer}. The custom node renderer renders a base \texttt{<g>} svg element per node, which contains three circles with different radius settings. 
+In chapter \ref{cha:visualization} the figure \ref{fig:reactD3stroy} shows a component story of a customized force graph component. The snippet in \ref{prog:customForceGraph} shows the sourcecode for the custom component. Instead of using the default node renderer, a custom node rendering function is used as it can be seen on lines \ref{line:customNodeRenderer} and \ref{line:useCustomNodeRenderer}. The custom node renderer renders a base \texttt{<g>} SVG element per node, which contains three circles with different radius settings. 
 
 Due to the fact, that the base element is not a circle element anymore, the ticking function has to be customized as well. Line \ref{line:customTickHandler} in \ref{prog:customForceGraph} shows the implementation of the custom tick handler. Instead of passing the position via \texttt{cx} and \texttt{cy} coordinates, the function applies a transform property to the the node selection which translates the base node to the x and y coordinates. The translation is necessary, as the group SVG element cannot directly accept x and y coordinates.
 
@@ -72,6 +72,6 @@ const CustomForceGraph = ({ height, width, nodes, links }) => (
 
 The code example in \ref{prog:customForceGraph} demonstrates really well, how the graceful opt-in strategy of the API works. The example does not use every possible prop that can be added to the force graph like demonstrated in the code example in \ref{prog:hybridForceGraphComponentAPI}. The implementation of the custom graph omits the \texttt{forceOptions} prop for example. The hybrid force graph component falls back to the standard force simulation configuration as a result. The custom link render function prop is also omitted as the default link implementation is sufficient for the custom force graph.
 
-\section{Final thoughts}
+\section{Final Thoughts}
 
 In the end only time will tell, if the component is useful for the community once it is published and if there are some open source developers willing to contribute to the project. Due to fact that the force graph component is already utilized in at least one production project the library component is already a success.

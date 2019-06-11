@@ -3,7 +3,7 @@
 
 The research question of the thesis is if React can be combined with D3 without losing any performance in the browser. The following sections introduce the reader not only to the benchmark setup and testing methodologies but also to the final results of the benchmarks. There is also a discussion which elaborates all test results. Since humans cannot measure the exact amount of frames per second, a special section introduces the reader to the human perception of fluid animations and how the testing results can be interpreted even further with that knowledge.
 
-\section{Test environment setup}
+\section{Test Environment Setup}
 
 This section describes the testing environment that was implemented to compare the three force simulation component prototypes. There are a few challenges that had to be taken into account when realizing the testing environment. Also, the implementation details are elaborated and explained. Last but not least, the testing devices are introduced which are used to run the benchmark.
 
@@ -15,7 +15,7 @@ When benchmarking web applications, it is very complicated to get performance va
 
 Another big problem is the fact that browsers detect the refresh rate of monitors when utilizing the request animation frame functionality. Monitors with a refresh rate of 144 hertz allow browsers to produce up to 144 frames per second. 60-hertz monitors, on the other hand, limit the browser's framerate to 60 FPS. The maximum amount of animation frame executions in any browser can only ever go up to the monitor's amount of hertz the browser window is running in. 
 
-Speaking of utilizing the request animation frame functionality, it must be mentioned that each browser has a different implementation of the functionality. The Chrome browser, for example, is smoothing out the performance by trying to executing animation frames regularly, which means that the overall performance might be lowered to achieve a smoother framerate. Experience shows that Firefox, on the other hand, always fires its animation frames whenever a frame is available, which can result in higher overall but not as consistent framerates.
+Speaking of utilizing the request animation frame functionality, it must be mentioned that each browser has a different implementation of the functionality. The Chrome\footnote{https://www.google.com/intl/de/chrome/} browser, for example, is smoothing out the performance by trying to executing animation frames regularly, which means that the overall performance might be lowered to achieve a smoother framerate as explained in \cite{ChromeRAF}. Experience shows that Firefox\footnote{https://www.mozilla.org/de/firefox/new/}, on the other hand, always fires its animation frames whenever a frame is available, which can result in higher overall but not as consistent framerates.
 
 Last but not least, another challenge was to build a performance measuring environment that can be used without adding code to the prototypes. Theoretically, each prototype should be a complete component that can be shipped as a third party library. By adding performance measurement specific code, the components would contain functionality that is not needed when shipping production builds of the components.
 
@@ -26,7 +26,7 @@ Last but not least, another challenge was to build a performance measuring envir
   \label{fig:reactD3benchResult}
 \end{figure}
 
-\subsection{Building a stable Testing Environment}
+\subsection{Building a Stable Testing Environment}
 \label{sub:perfImplDetails}
 
 A testing environment which produces consistent data input across multiple iterations yields the best testing results when benchmarking all three prototypes. Testing the force simulation prototypes with the same data across multiple benchmarks, environments, and devices is of utmost importance. A valid solution is to use a pseudo-random data generator which can be restarted and reseeded each benchmark iteration.
@@ -48,7 +48,7 @@ Pseudo-random generated data is obtained by a specially implemented custom helpe
 
 Tackling the performance measurement problem is a much harder task, however. To be able to measure the number of frames per second, the request animation browser functionality can be used. Another custom implemented module provides some functionality that is specifically designed to measure performance intensive JavaScript animations. By requesting an animation frame as often as possible in a terminable infinite loop, a reference timestamp can be used to measure the amount of animation frame executions per seconds which is equal to the frames per second the browser produces.
 
-Presenting the performance results mustn't be underestimated either. To provide benchmark results appealingly, each iteration is represented via a visual container that contains all relevant information for a specific test iteration. If there are 6 test iterations, 6 containers are rendered after the benchmark. The containers contain the number of cycle per iteration, the test configuration, the number of frames per second, the overall execution time per cycle, the average frame time, and also the highest frame time. Figure \ref{fig:reactD3benchResult} shows how the benchmark results visually look like.
+Presenting the performance results must not be underestimated either. To provide benchmark results appealingly, each iteration is represented via a visual container that contains all relevant information for a specific test iteration. If there are six test iterations, six containers are rendered after the benchmark. The containers contain the number of cycle per iteration, the test configuration, the number of frames per second, the overall execution time per cycle, the average frame time, and also the highest frame time. Figure \ref{fig:reactD3benchResult} shows how the benchmark results visually look like.
 
 Finally, the benchmark tool has to be easy to use on all kinds of devices. The thesis project also contains a small React application which can be deployed on any static web hosting service that can serve single page applications. A visual representation of the basic benchmark app can be seen in figure \ref{fig:reactD3bench1}. The React application is a wrapper around the testing environment, which lets users select the desired benchmark for any of the three force simulation prototypes and then runs it in the browser. Each benchmark also has an easily distinguishable URL to be able to copy paste a specific benchmark URL into any browser. Figures \ref{fig:reactD3bench1} and \ref{fig:reactD3bench2} show how the URL contains all relevant benchmark parameters. That way the benchmark URLs can be pasted into any browser to execute the benchmark. 
 
@@ -59,11 +59,11 @@ Finally, the benchmark tool has to be easy to use on all kinds of devices. The t
   \label{fig:reactD3bench2}
 \end{figure}
 
-\section{Testing setup}
+\section{Testing Setup}
 
 Having a bulletproof testing setup plays a fundamental role in producing scientifically releveant test results. Therefore, the following sections of the thesis provide a thorough insight on the testing devices and on how the whole benchmark methodology is conceptionalized. 
 
-\subsection{Testing devices}
+\subsection{Testing Devices}
 
 \begin{table}
   \centering
@@ -119,7 +119,7 @@ Having a bulletproof testing setup plays a fundamental role in producing scienti
   \end{threeparttable}
 \end{table}
 
-The amount of test devices should be as high as possible while still being reasonable regarding to the effort it takes to process all resulting benchmark data. A total amount of 6 devices is enough to retrieve scientifically significant results. The range of devices is divided into 2 sections: high-end devices and low-end devices. 
+The amount of test devices should be as high as possible while still being reasonable regarding to the effort it takes to process all resulting benchmark data. A total amount of six devices is enough to retrieve scientifically significant results. The range of devices is divided into two sections: high-end devices and low-end devices. 
 
 The mobile devices used for testing are a OnePlus 1 phone, a OnePlus 5t phone, and a SurfaceBook in tablet mode. All low-end devices and their specs are listed in table \ref{tab:lowendTestingDevices}. It must be noted, that every selected low-end device has a monitor refresh rate of 60-hertz. 
 
@@ -175,7 +175,7 @@ The table \ref{tab:highendTestingDevices} introduces all high-end devices which 
   \end{threeparttable}
 \end{table}
 
-\subsection{Testing methodologies}
+\subsection{Testing Methodologies}
 
 \begin{figure}
 \centering
@@ -188,19 +188,19 @@ Running the benchmarks to get valid and scientific testing results is relatively
 
 Devices with high refresh rates can be sufficient for measuring the overall best performing prototype. One of the more interesting research aspects of the thesis though is the question, how well the prototypes perform on mobile devices with lower performance specifications than desktop PCs. Thus the testing results must be split up into different categories as a consequence. Due to the fact that not only frames per second, but also other perfromance aspects like total execution time are measured, the lower performing devices can also be compared to each other.
 
-Each device runs through 6 iterations per prototype with exponentially increasing render difficulty. Figure \ref{fig:perfIterations} shows the benchmark configuration for the benchmark. Starting with a node count of 10 and a link count of five, the configuration ultimately goes up to 1000 nodes and 500 links. The third iteration is special, as the number of nodes and links is the same. The special configuration was added to test an extreme scenario of all nodes being connected to each other to induce some extra performance heavy force calculations.
+Each device runs through six iterations per prototype with exponentially increasing render difficulty. Figure \ref{fig:perfIterations} shows the benchmark configuration for the benchmark. Starting with a node count of 10 and a link count of five, the configuration ultimately goes up to 1000 nodes and 500 links. The third iteration is special, as the number of nodes and links is the same. The special configuration was added to test an extreme scenario of all nodes being connected to each other to induce some extra performance heavy force calculations.
 
-Each iteration runs through 10 cycles which equals a grand total of 60 cycles per prototype, browser, and device combination. Three high-end devices with 144-hertz monitors and the three low-end devices with 60-hertz monitors run the benchmark iterations in the Chrome and in the Firefox browser. The two browsers were selected, because they're the most significantly used, platform independent brwosers worldwide according to the statistics in \cite{StatCounterBrowserMarketShare} and \cite{W3CBrowserMarketShare}. Taking into account that there are 6 devices, 3 prototypes, and 2 browsers, the total number of iterations is 36 and the total number of iteration cycles is 360 as every iteration has 10 cycles.
+Each iteration runs through 10 cycles which equals a grand total of 60 cycles per prototype, browser, and device combination. Three high-end devices with 144-hertz monitors and the three low-end devices with 60-hertz monitors run the benchmark iterations in the Chrome and in the Firefox browser. The two browsers were selected, because they are the most significantly used, platform independent browsers worldwide according to the statistics in \cite{StatCounterBrowserMarketShare} and \cite{W3CBrowserMarketShare}. Taking into account that there are six devices, three prototypes, and two browsers, the total number of iterations is 36 and the total number of iteration cycles is 360 as every iteration has 10 cycles.
 
 \section{Benchmark Results}
 
-This section answers the research question if React can be combined with React without introducing any performance losses in the browser. Extensive benchmark testing sessions resulted in some remarkable research results which are presented below. After presenting the test results, an introduction to the human perception of fluid animations helps the reader to follow the subsequent interpretation of the benchmark results.
+This section answers the research question if React can be combined with D3 without introducing any performance losses in the browser. Extensive benchmark testing sessions resulted in some remarkable research results which are presented below. After presenting the test results, an introduction to the human perception of fluid animations helps the reader to follow the subsequent interpretation of the benchmark results.
 
-\subsection{Introducing the test results}
+\subsection{Introducing the Test Results}
 
 First of all, the thesis project is a success, as the overall performance numbers show a clear trend that the hybrid prototype is ahead of Uber's pure react implementation. The total execution time of all combined benchmark iteration cycles is exactly 25326ms when combining the average execution times of each test. When converting milliseconds to hours, the result is 7.04 hours. Since the benchmark environment was designed for extensive benchmark sessions, the time between running the benchmarks was minimized. The only tedious and most time-consuming task was to write down the actual benchmark results. Letting devices run the tests required no further user interaction. 
 
-Starting with the low-end devices, figure \ref{fig:perfLowEnd001} shows the average FPS of the low-end devices. An overall downwards trend can immediately be seen in the FPS chart, which is expected, of course. The more DOM nodes the browsers have to calculate, the lower the frames per second get per iteration. Each group of bars in the chart represents an average value for each prototype per benchmark iteration. Note, that all values are the average taken from 10 iteration cycles of the chrome and the Firefox browser. The prototypes mostly yielded the expected performance numbers starting with the reference performance of the pure D3 prototype, followed by the hybrid component and then finally followed by the pure React force graph component.
+Starting with the low-end devices, figure \ref{fig:perfLowEnd001} shows the average FPS of the low-end devices. An overall downwards trend can immediately be seen in the FPS chart, which is expected, of course. The more DOM nodes the browsers have to calculate, the lower the frames per second get per iteration. Each group of bars in the chart represents an average value for each prototype per benchmark iteration. Note, that all values are the average taken from 10 iteration cycles of the Chrome and the Firefox browser. The prototypes mostly yielded the expected performance numbers starting with the reference performance of the pure D3 prototype, followed by the hybrid component and then finally followed by the pure React force graph component.
 
 \begin{figure}
 \centering
@@ -209,7 +209,7 @@ Starting with the low-end devices, figure \ref{fig:perfLowEnd001} shows the aver
 \label{fig:perfLowEnd001}
 \end{figure}
 
-Following up with the high-end devices, figure \ref{fig:perfHighEnd001} shows the average FPS values of the high-end benchmark iterations. Looking at the bar chart, it is apparent that the high-end devices hit the fps cap of 144FPS throughout the first few iteration cycles. As mentioned before, the devices would have been able to put out a higher number of frames per second but were limited to the browsers animation frame functionality which is in itself limited to the devices' monitor refresh rate. When looking at the third iteration, a steady decrease of FPS can be observed though, as the iteration difficulty is high enough for all devices not to hit the monitor refresh rate limit anymore.
+Following up with the high-end devices, figure \ref{fig:perfHighEnd001} shows the average FPS values of the high-end benchmark iterations. Looking at the bar chart, it is apparent that the high-end devices hit the FPS cap of 144FPS throughout the first few iteration cycles. As mentioned before, the devices would have been able to put out a higher number of frames per second but were limited to the browsers animation frame functionality which is in itself limited to the devices' monitor refresh rate. When looking at the third iteration, a steady decrease of FPS can be observed though, as the iteration difficulty is high enough for all devices not to hit the monitor refresh rate limit anymore.
 
 \begin{figure}
 \centering
@@ -238,7 +238,7 @@ Continuing with the high-end devices, the chart in \ref{fig:perfHighEnd002} show
 
 %% frametime another way to display frames per second, just another calculation
 
-Measuring the average frame time of animations can provide insights into the user's perception of fluid animation. If the value is too high, the animation may not be experienced as a smooth animation. Therefore measuring the value is crucial when comparing the prototypes to each other. Figure \ref{fig:perfLowEnd003} shows a bar chart of the low-end device benchmark. Towards the last 2 iterations, the benchmark configuration seems to have hit a certain threshold since the values rise exponentially. The other performance result shows a similar pattern to the previous results, however.
+Measuring the average frame time of animations can provide insights into the user's perception of fluid animation. If the value is too high, the animation may not be experienced as a smooth animation. Therefore measuring the value is crucial when comparing the prototypes to each other. Figure \ref{fig:perfLowEnd003} shows a bar chart of the low-end device benchmark. Towards the last two iterations, the benchmark configuration seems to have hit a certain threshold since the values rise exponentially. The other performance result shows a similar pattern to the previous results, however.
 
 \begin{figure}
 \centering
@@ -274,20 +274,20 @@ However, the performance graph in \ref{fig:perfHighEnd004} shows more expected r
 \label{fig:perfHighEnd004}
 \end{figure}
 
-\subsection{Human Perception of fluid animations}
+\subsection{Human Perception of Fluid Animations}
 \label{sub:humanPerception}
 
-%%Humans vision is bad lol, they can only see 13 fps but when do we actually notice some stuttering or laggy animation performance? 
+%%Humans vision is bad lol, they can only see 13 FPS but when do we actually notice some stuttering or laggy animation performance? 
 
 Human vision is a very complicated topic, as there has been a large volume of studies for years which tried to determine at which point humans perceive a series of images as fluid motion. The article in \cite{RestorationOfMotionPictureFilm} claims that humans perceive motion if the animation is displayed with at least 12 frames per second. During further research, another article was found which states, that humans can detect specific images in a rapid serial visual representation (RSVP) of a series of multiple pictures. The paper in \cite{Potter2014} found that participants could determine if the RSVP stream contained a specific picture even with a frequency of displaying each picture for just 13ms. 
 
-Another vital question is at which point an observer doesn't perceive an animation as fluid anymore. As mentioned before, the time per frame should be below 13ms in the best case to provide the perception of fluid animation. Although animations with at least 12 frames per second can be perceived as motion, they are not necessarily experienced as fluid motion though. As the performance measurements of the thesis project yield some final numbers, they can be used to determine if the animation of the test can be experienced as fluid motion or not.
+Another vital question is at which point an observer does not perceive an animation as fluid anymore. As mentioned before, the time per frame should be below 13ms in the best case to provide the perception of fluid animation. Although animations with at least 12 frames per second can be perceived as motion, they are not necessarily experienced as fluid motion though. As the performance measurements of the thesis project yield some final numbers, they can be used to determine if the animation of the test can be experienced as fluid motion or not.
 
 Further research in the field of human perception of animation revealed yet another interesting result. Countless studies throughout the last decades have tried to find an answer to the question at which point humans do not experience an animation as stuttering or flickering anymore. The answer of most research papers is, though, that flickering or a so-called "lag" cannot be detected if the human perception cannot distinguish between modulated light and a stable field anymore. After doing some extensive research, the rate seems to be between 50 and 90 hertz according to several papers like \cite{6375944}, \cite{farrell1987predicting} or \cite{stereoscopicFlickerArticle}. The papers are mostly about the monitors' refresh rate, but the same also applies for the displayed frames per second of an animation rendered in the browser.
 
-\subsection{Interpreting the test results}
+\subsection{Interpreting the Test Results}
 
-When interpreting the test results, it is essential to keep in mind that the hybrid implementation uses a custom animation library internally, as mentioned in \ref{sub:D3AndReactHybrid} which can be turned off to improve performance. The animation feature was turned on during the execution of the benchmark tests even though the test iterations do not include any individual node animation. As a result, the pure React component has a clear advantage over the hybrid component by not having to calculate node animations as they're not implemented on the pure React component. Even though the additional performance decreasing feature was kept on during all tests, the hybrid component generally yielded equal or better performance numbers in comparison to the pure React prototype.
+When interpreting the test results, it is essential to keep in mind that the hybrid implementation uses a custom animation library internally, as mentioned in \ref{sub:D3AndReactHybrid} which can be turned off to improve performance. The animation feature was turned on during the execution of the benchmark tests even though the test iterations do not include any individual node animation. As a result, the pure React component has a clear advantage over the hybrid component by not having to calculate node animations as they are not implemented on the pure React component. Even though the additional performance decreasing feature was kept on during all tests, the hybrid component generally yielded equal or better performance numbers in comparison to the pure React prototype.
 
 Another clear advantage of the React prototype is that newer versions of React provide functionality which assigns a lower priority to DOM nodes which are outside the viewport of the browser. Lin Clark explains the functionality of the library during the React conference in \cite{ReactReconcliliationVideo}, where the feature was first introduced. Due to the fact, that mobile devices mostly have smaller viewports, a large proportion of the nodes in higher iteration difficulties is rendered outside of the viewport again providing an advantage to the React prototype.
 
@@ -311,5 +311,5 @@ All in all, the different prototypes performed quite well in general. The questi
 
 Overall all the prototypes performed pretty well. As mentioned before, the pure D3 component is the clear winner and best performing prototype, but that was the expected result, as it was developed to serve as a baseline for the results of the other prototypes. When glancing over the rest of the results, the hybrid nearly always comes out ahead of the pure React prototype. The primary purpose of the study was if React can be combined with D3 without losing performance in the browser. The definitive answer to that question has to be no, unfortunately, as there are some performance penalties when combining two full grown libraries. The test results also support the answer to the research question.
 
-When talking about user experience though, the prototypes are pretty much all usable in production projects, as the divergence of the performance numbers mostly stays within the bounds of a smooth animation experience. The benchmark results of the third and fourth iteration are acceptable when looking at the fps and average frame time. When using the force graphs on mobile devices, the performance is worse overall, but due to the fact that even the pure D3 prototypes performed a lot worse on low-end devices, the combination prototypes cannot magically yield a better performance, as they technically not only have to calculate D3 force simulation ticks but also React render cycles. As a consequence, the performance is worse than just letting D3 handle the whole simulation on its own. 
+When talking about user experience though, the prototypes are pretty much all usable in production projects, as the divergence of the performance numbers mostly stays within the bounds of a smooth animation experience. The benchmark results of the third and fourth iteration are acceptable when looking at the FPS and average frame time. When using the force graphs on mobile devices, the performance is worse overall, but due to the fact that even the pure D3 prototypes performed a lot worse on low-end devices, the combination prototypes cannot magically yield a better performance, as they technically not only have to calculate D3 force simulation ticks but also React render cycles. As a consequence, the performance is worse than just letting D3 handle the whole simulation on its own. 
 
