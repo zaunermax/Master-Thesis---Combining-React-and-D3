@@ -7,9 +7,9 @@ This chapter is about the publishing plans of the hybrid prototype and what API 
 
 \section{Building an Open Source Library Component}
 
-Conceptionally speaking, if there is a library that ships a single component, the React component has to be somehow packaged and then published to npm\footnote{https://www.npmjs.com/} to be usable by other developers. Since npm is one of the biggest package manager for web projects, the component can be installed in any web project once it has been published to the npm registry. Bundler tools like webpack\footnote{https://webpack.js.org/}, rollup\footnote{https://rollupjs.org}, or parcel\footnote{https://parceljs.org/} make it easy to create static library assets that can be published to npm.
+Conceptionally speaking, if there is a library that ships a single component, the React component has to be somehow packaged and then published to npm\footnote{\url{https://www.npmjs.com/}} to be usable by other developers. Since npm is one of the biggest package manager for web projects, the component can be installed in any web project once it has been published to the npm registry. Bundler tools like webpack\footnote{\url{https://webpack.js.org/}}, rollup\footnote{\url{https://rollupjs.org}}, or parcel\footnote{\url{https://parceljs.org/}} make it easy to create static library assets that can be published to npm.
 
-Furthermore, the code should be hosted on a public collaboration platform. The best option to host a public VCS repository is GitHub\footnote{https://github.com/} of course, as public projects can be hosted free of charge. As a consequence the ultimate goal of opensourcing the component is to not only publish the component to npm but also to GitHub. Most if not almost all of the open source third party react component code bases are hosted on GitHub.
+Furthermore, the code should be hosted on a public collaboration platform. The best option to host a public VCS repository is GitHub\footnote{\url{https://github.com/}} of course, as public projects can be hosted free of charge. As a consequence the ultimate goal of opensourcing the component is to not only publish the component to npm but also to GitHub. Most if not almost all of the open source third party react component code bases are hosted on GitHub.
 
 The usage of the react component should be as easy and straigt forward as possible to enable developers an easy starting point to using the component. The API should be designed in a way that programmers can incrementally opt into more complicated features. By simply using the component with the standard required props, a standard D3 force simulation should be rendered. After going through the documentation and the tutorial, developers should also be able to gracefully opt into the more complicated features of the component like custom node and link rendering.
 
@@ -18,7 +18,7 @@ As mentioned in section \ref{subsub:hybridDisadvantages}, a big disadvantage of 
 \section{Technical Details of the Component API}
 
 \begin{program}
-\caption{Alpha version of the force graph component API}
+\caption{Alpha version of the force graph component API.}
 \label{prog:hybridForceGraphComponentAPI}
 \begin{JsCode}
 <HybridForceGraph 
@@ -42,7 +42,7 @@ In chapter \ref{cha:visualization} the figure \ref{fig:reactD3stroy} shows a com
 Due to the fact that the base element is not a circle element anymore, the ticking function has to be customized as well. Line \ref{line:customTickHandler} in \ref{prog:customForceGraph} shows the implementation of the custom tick handler. Instead of passing the position via \texttt{cx} and \texttt{cy} coordinates, the function applies a transform property to the the node selection which translates the base node to the x and y coordinates. The translation is necessary, as the group SVG element cannot directly accept x and y coordinates.
 
 \begin{program}
-\caption{Alpha version of the force graph component API}
+\caption{Alpha version of the force graph component API.}
 \label{prog:customForceGraph}
 \begin{JsCode}
 const customTickHandler = (nodeSel) => /+\label{line:customTickHandler}+/ 

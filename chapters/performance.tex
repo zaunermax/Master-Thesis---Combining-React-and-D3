@@ -15,14 +15,14 @@ When benchmarking web applications, it is very complicated to get performance va
 
 Another big problem is the fact that browsers detect the refresh rate of monitors when utilizing the request animation frame functionality. Monitors with a refresh rate of 144 hertz allow browsers to produce up to 144 frames per second. 60-hertz monitors, on the other hand, limit the browser's framerate to 60 FPS. The maximum amount of animation frame executions in any browser can only ever go up to the monitor's amount of hertz the browser window is running in. 
 
-Speaking of utilizing the request animation frame functionality, it must be mentioned that each browser has a different implementation of the functionality. The Chrome\footnote{https://www.google.com/intl/de/chrome/} browser, for example, is smoothing out the performance by trying to executing animation frames regularly, which means that the overall performance might be lowered to achieve a smoother framerate as explained in \cite{ChromeRAF}. Experience shows that Firefox\footnote{https://www.mozilla.org/de/firefox/new/}, on the other hand, always fires its animation frames whenever a frame is available, which can result in higher overall but not as consistent framerates.
+Speaking of utilizing the request animation frame functionality, it must be mentioned that each browser has a different implementation of the functionality. The Chrome\footnote{\url{https://www.google.com/intl/de/chrome/}} browser, for example, is smoothing out the performance by trying to executing animation frames regularly, which means that the overall performance might be lowered to achieve a smoother framerate as explained in \cite{ChromeRAF}. Experience shows that Firefox\footnote{\url{https://www.mozilla.org/de/firefox/new/}}, on the other hand, always fires its animation frames whenever a frame is available, which can result in higher overall but not as consistent framerates.
 
 Last but not least, another challenge was to build a performance measuring environment that can be used without adding code to the prototypes. Theoretically, each prototype should be a complete component that can be shipped as a third party library. By adding performance measurement specific code, the components would contain functionality that is not needed when shipping production builds of the components.
 
 \begin{figure}
   \centering
   \includegraphics[width=1\columnwidth]{testresults}
-  \caption{Hybrid prototype benchmark results}
+  \caption{Hybrid prototype benchmark results.}
   \label{fig:reactD3benchResult}
 \end{figure}
 
@@ -38,7 +38,7 @@ Since browsers frequently yield different performance numbers across iterations 
 \begin{figure}
   \centering
   \includegraphics[width=0.5\columnwidth]{reactd3bench}
-  \caption{Overview of the benchmark application}
+  \caption{Overview of the benchmark application.}
   \label{fig:reactD3bench1}
 \end{figure}
 
@@ -55,7 +55,7 @@ Finally, the benchmark tool has to be easy to use on all kinds of devices. The t
 \begin{figure}
   \centering
   \includegraphics[width=0.6\columnwidth]{reactd3bench1}
-  \caption{The benchmark currently iterating through hybrid prototype iterations}
+  \caption{The benchmark currently iterating through hybrid prototype iterations.}
   \label{fig:reactD3bench2}
 \end{figure}
 
@@ -180,7 +180,7 @@ The table \ref{tab:highendTestingDevices} introduces all high-end devices which 
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 5cm 4cm 5cm, clip, width=1\columnwidth]{perfIterations.pdf}
-\caption{Benchmark iteration configuration}
+\caption{Benchmark iteration configuration.}
 \label{fig:perfIterations}
 \end{figure}
 
@@ -205,7 +205,7 @@ Starting with the low-end devices, figure \ref{fig:perfLowEnd001} shows the aver
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd001.pdf}
-\caption{Low-end devices' average frames per second per benchmark iteration cycle (higher is better)}
+\caption{Low-end devices' average frames per second per benchmark iteration cycle (higher is better).}
 \label{fig:perfLowEnd001}
 \end{figure}
 
@@ -214,7 +214,7 @@ Following up with the high-end devices, figure \ref{fig:perfHighEnd001} shows th
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd001.pdf}
-\caption{High-end devices' average frames per second per benchmark iteration cycle (higher is better)}
+\caption{High-end devices' average frames per second per benchmark iteration cycle (higher is better).}
 \label{fig:perfHighEnd001}
 \end{figure}
 
@@ -223,7 +223,7 @@ The bar chart in \ref{fig:perfLowEnd002} shows the average time it took to compl
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd002.pdf}
-\caption{Low-end devices' average time to complete for one benchmark iteration cycle in milliseconds (lower is better)}
+\caption{Low-end devices' average time to complete for one benchmark iteration cycle in milliseconds (lower is better).}
 \label{fig:perfLowEnd002}
 \end{figure}
 
@@ -232,7 +232,7 @@ Continuing with the high-end devices, the chart in \ref{fig:perfHighEnd002} show
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd002.pdf}
-\caption{High-end devices' average time to complete for one benchmark iteration cycle in milliseconds (lower is better)}
+\caption{High-end devices' average time to complete for one benchmark iteration cycle in milliseconds (lower is better).}
 \label{fig:perfHighEnd002}
 \end{figure}
 
@@ -243,7 +243,7 @@ Measuring the average frame time of animations can provide insights into the use
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd003.pdf}
-\caption{Low-end devices' average frame time per benchmark iteration cycle (lower is better)}
+\caption{Low-end devices' average frame time per benchmark iteration cycle (lower is better).}
 \label{fig:perfLowEnd003}
 \end{figure}
 
@@ -252,7 +252,7 @@ Looking at the high-end results in \ref{fig:perfHighEnd003} the same problem as 
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd003.pdf}
-\caption{High-end devices' average frame time per benchmark iteration cycle (lower is better)}
+\caption{High-end devices' average frame time per benchmark iteration cycle (lower is better).}
 \label{fig:perfHighEnd003}
 \end{figure}
 
@@ -261,7 +261,7 @@ Last but not least, a critical aspect of any animation performance measurement i
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfLowEnd004.pdf}
-\caption{Low-end devices' average maximum frame time per benchmark iteration cycle (lower is better)}
+\caption{Low-end devices' average maximum frame time per benchmark iteration cycle (lower is better).}
 \label{fig:perfLowEnd004}
 \end{figure}
 
@@ -270,7 +270,7 @@ However, the performance graph in \ref{fig:perfHighEnd004} shows more expected r
 \begin{figure}
 \centering
 \includegraphics[scale=2.5, trim= 4cm 4.5cm 4cm 4.5cm, clip, width=1\columnwidth]{perfHighEnd004.pdf}
-\caption{High-end devices' average maximum frame time per benchmark iteration cycle (lower is better)}
+\caption{High-end devices' average maximum frame time per benchmark iteration cycle (lower is better).}
 \label{fig:perfHighEnd004}
 \end{figure}
 
