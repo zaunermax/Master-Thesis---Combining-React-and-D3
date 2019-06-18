@@ -1,7 +1,7 @@
 \chapter{Conclusion}
 \label{cha:conclusion}
 
-This chapter is the conclusion of all the findings of this paper. Not only the prototypes are recapitulated, but also the test results are summarized. The most apparent finding emerging from this thesis though is the fact that there is a possible combination of React and D3 which only sacrifices a small proportion of performance to enable React developers to use D3 functionalities but write React code.
+This chapter is the conclusion of all the findings of this master's thesis. Not only the prototypes are recapitulated, but also the test results are summarized. The most apparent finding emerging from this thesis though is the fact that there is a possible combination of React and D3 which only sacrifices a small proportion of performance to enable React developers to use D3 functionalities but write React code.
 
 \section{Prototypes}
 
@@ -25,7 +25,7 @@ One of the most significant advantages of the prototype is that maintainers of t
 
 \subsection{React and D3 Hybrid Prototype}
 
-Last but not least, there is the React and D3 hybrid prototype, which is presented in \ref{sub:D3AndReactHybrid}. The hybrid component works by initially rendering all the simulation's nodes via React and then letting D3 select the already existing nodes to handle the nodes' positioning. React handles the styling and node shape and D3 handles the node and link positions. The hybrid component uses all the lifecycle methods in React's commit phase to being able to read the DOM nodes that have already been committed to the DOM. 
+Last but not least, there is the React and D3 hybrid prototype, which is presented in section \ref{sub:D3AndReactHybrid}. The hybrid component works by initially rendering all the simulation's nodes via React and then letting D3 select the already existing nodes to handle the nodes' positioning. React handles the styling and node shape and D3 handles the node and link positions. The hybrid component uses all the lifecycle methods in React's commit phase to being able to read the DOM nodes that have already been committed to the DOM. 
 
 The implementation of the hybrid component is very straight forward. The React lifecycle method \texttt{componentDidMount()} is used to initialize the D3 simulation and the \texttt{componentDidUpdate()} lifecycle method is used to update the D3 force simulation if the simulation data props have changed. The render method takes care of the complete simulation presentation except for the positions, which are handled in the tick updater function. The tick handler function is one of the few instances in the hybrid component where D3 code is used.
 
