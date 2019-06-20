@@ -1,7 +1,7 @@
 \chapter{Conclusion}
 \label{cha:conclusion}
 
-This chapter is the conclusion of all the findings of this master's thesis. Not only the prototypes are recapitulated, but also the test results are summarized. The most apparent finding emerging from this thesis though is the fact that there is a possible combination of React and D3 which only sacrifices a small proportion of performance to enable React developers to use D3 functionalities but write React code.
+This chapter is the conclusion of all the findings of this master's thesis. Not only the prototypes are recapitulated, but also the test results are summarized. The most apparent finding emerging from this thesis is the fact that there is a possible combination of React and D3 which only sacrifices a small proportion of performance to enable React developers to use D3 functionalities, but write React code.
 
 \section{Prototypes}
 
@@ -9,19 +9,19 @@ Three prototypes were developed to implement a combination of React and D3. Ever
 
 \subsection{Pure D3 Prototype}
 
-The first prototype is the pure D3 variant as introduced in section \ref{sec:pureD3prototype}. The component is a React wrapper that renders a base element which D3 then hooks into. D3 is completely in charge of the whole simulation. Not only does D3 append and remove the nodes from the DOM but also D3 controls all node positions of the simulation. The prototype relies on React's reconciliation algorithm, which never detects any change in the base element an always keeps the reference to the real SVG element intact.
+The first prototype is the pure D3 variant as introduced in section \ref{sec:pureD3prototype}. The component is a React wrapper that renders a base element which D3 then hooks into. D3 is completely in charge of the whole simulation. Not only does D3 append and remove the nodes from the DOM but also D3 controls all node positions of the simulation. The prototype relies on React's reconciliation algorithm, which never detects any change in the staticly rendered base element and always keeps the reference to the real SVG element intact.
 
 The implementation is very similar to a D3 only implementation, as React is only used to render the static base SVG element. Much imperative D3 code is used to append and remove nodes. Furthermore, the code contains a lot of D3's imperative selection functions, which help to keep track of entering and exiting nodes to apply transitions to them. The complete presentation layer is handled by D3, which includes not only style attributes but also the positions of the nodes and links.
 
-A significant advantage of the pure D3 prototype is that its performance is close if not the same as a native D3 implementation. The most notable disadvantage is that almost the entire code of the component is written in pure D3 code, which could lead to a poor developer experience if the component advances in the future. Also, no custom render functions can be used, as a custom mechanism would have to be added to enable user customized D3 code in the component. 
+A significant advantage of the pure D3 prototype is that its performance is close to if not the same as a native D3 implementation. The most notable disadvantage is that almost the entire code of the component is written in pure D3 code, which could lead to a poor developer experience if the component advances in the future. Also, no custom render functions can be used, as a custom mechanism would have to be added to enable user customized D3 code in the component. 
 
 \subsection{Pure React Prototype}
 
 Section \ref{sec:pureReactPrototype} introduces the pure React prototype. React is completely in charge of the presentational layer. As a consequence, not only the nodes' and links' positions but also their styling and node types are completely handled by React. When the component mounts, D3's force simulation is initialized with the data. The prototype then pulls the data via the tick function and sets it in its internal state. Due to the nature of React, the component goes through a new render cycle to render the newly fetched node and link position. The complete cycle happens multiple times a second.
 
-As mentioned before, the component's constructor is used to initialize the D3 even before React renders anything. The tick handling function pulls all node and link positions from the simulation every tick and sets it via React's set state function every fraction of a second as often as the D3's tick function is called. The component then completely rerenders with the newly set node and link positions. Because the component's state updates every faction of a second, component prop updates have to be distinguished from state updates. The \texttt{shouldComponentUpdate()} function is used to update the D3 force simulation only if the props have changed.
+As mentioned before, the component's constructor is used to initialize D3 even before React renders anything. The tick handling function pulls all node and link positions from the simulation every tick and sets it via React's set state function every fraction of a second as often as D3's tick function is called. The component then completely rerenders with the newly set node and link positions. Because the component's state updates every fraction of a second, component prop updates have to be distinguished from state updates. The \texttt{shouldComponentUpdate()} function is used to update the D3 force simulation only if the props have changed.
 
-One of the most significant advantages of the prototype is that maintainers of the component can use declarative React code to handle the complete presentation layer of the simulation. Additionally to the styling and node type, also the position is entirely handled by React. The fact that React is used to handle the whole simulation tree is also the most considerable disadvantage because it implies that React has to go through a complete rendering cycle every time the simulation's tick handler is called. Another advantage is that props can customize the prototype's render functions. However, it is quite complicated to achieve the full D3 functionality like dragging and enter and exit animations, as they have to be implemented from scratch. 
+One of the most significant advantages of the prototype is that maintainers of the component can use declarative React code to handle the complete presentation layer of the simulation. In addition to the styling and node type, also the position is entirely handled by React. The fact that React is used to handle the whole simulation tree is also the most considerable disadvantage because it implies that React has to go through a complete rendering cycle every time the simulation's tick handler is called. Another advantage is that props can customize the prototype's render functions. However, it is quite complicated to achieve the full D3 functionality like dragging and enter and exit animations, as they have to be implemented from scratch. 
 
 \subsection{React and D3 Hybrid Prototype}
 
@@ -29,7 +29,7 @@ Last but not least, there is the React and D3 hybrid prototype, which is present
 
 The implementation of the hybrid component is very straight forward. The React lifecycle method \texttt{componentDidMount()} is used to initialize the D3 simulation and the \texttt{componentDidUpdate()} lifecycle method is used to update the D3 force simulation if the simulation data props have changed. The render method takes care of the complete simulation presentation except for the positions, which are handled in the tick updater function. The tick handler function is one of the few instances in the hybrid component where D3 code is used.
 
-Being able to make the render functions pluggable is also a significant advantage for the hybrid component. Also, D3 functionality like dragging nodes, zooming, and adding transitions is easy to implement with the hybrid prototype. The only disadvantage might be that maintainers of the prototype would have to completely understand how the rendering process works to be able to contribute to the component.
+Being able to make the render functions pluggable is also a significant advantage of the hybrid component. Also, D3 functionality like dragging nodes, zooming, and adding transitions is easy to implement with the hybrid prototype. The only disadvantage might be that maintainers of the prototype would have to completely understand how the rendering process works to be able to contribute to the component.
 
 \section{Performance Results}
 
@@ -43,7 +43,7 @@ Because the hybrid prototype is easily extensible with not only D3 but also Reac
 
 \section{Final Thoughts}
 
-Even though the performance numbers could have been better, the project is considered a success nevertheless due to the fact that the hybrid prototype's performance is not only on par or even superior to Uber's pure React variant. The performance is worse than a native D3 implementation, but that is expected if two big libraries are combined. The hybrid's component API also turned out to be very useful as the storybook examples demonstrate. Being able to not only use the power of D3 but also to write almost pure declarative React code to implement a force simulation is definitely considered a success.
+Even though the performance numbers could have been better, the project is considered a success nevertheless due to the fact that the hybrid prototype's performance is not only on par or even superior to Uber's pure React variant. The performance is worse than a native D3 implementation, but that is to be expected when two big libraries are combined. The hybrid's component API also turned out to be very useful as the storybook examples demonstrate. Being able to not only use the power of D3 but also to write almost pure declarative React code to implement a force simulation is definitely considered a success.
 
 
 % all in all big success, as i found an implementation that combines d3 and react and is super performant. Also open sourcing the thing is really cool as other developers can benefit from using the force component by coding their nodes in react as well.
