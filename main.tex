@@ -16,6 +16,7 @@
 \RequirePackage[utf8]{inputenc}		% Remove when using lualatex or xelatex entfernen!
 
 \usepackage[para]{threeparttable}
+\usepackage{dirtree}
 
 \graphicspath{{images/}}    % location of images and graphics
 \logofile{logo}				% logo file = images/logo.pdf (use \logofile{} for no logo)
@@ -70,11 +71,11 @@
 \include{chapters/conclusion}
 
 %%%----------------------------------------------------------
-%\appendix                                         % appendix 
+\appendix                                         % appendix 
 %%%%----------------------------------------------------------
 %
 %\include{back/appendix_a}	% technical supplements
-%\include{back/appendix_b}	% contents of the CD-ROM/DVD
+\include{back/appendix_b}	% contents of the CD-ROM/DVD
 %\include{back/appendix_c}	% chronological list of changes
 %\include{back/appendix_d}	% source text of this document
 
