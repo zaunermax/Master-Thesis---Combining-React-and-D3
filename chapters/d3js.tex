@@ -1,7 +1,7 @@
 \chapter{D3.js – Data-Driven Documents}
 \label{cha:d3js}
 
-This chapter provides an overview of the popular JavaScript library \emph{D3} \cite{D3Website} which is used to simplify implementations of data visualizations in the web for developers. It not only provides an overview of the libraries beginnings but also goes into detail about how to implement projects with \emph{D3}. The knowledge is required to understand the performance comparisons in chapters \ref{cha:performance} and \ref{cha:conclusion}.
+This chapter provides an overview of the popular \emph{JavaScript} library \emph{D3} \cite{D3Website} which is used to simplify implementations of data visualizations in the web for developers. It not only provides an overview of the libraries beginnings but also goes into detail about how to implement projects with \emph{D3}. The knowledge is required to understand the performance comparisons in chapters \ref{cha:performance} and \ref{cha:conclusion}.
 
 %% ------------------------------------------------------------------------------------------- %%
 %% ------------------------------------------------------------------------------------------- %%
@@ -9,11 +9,11 @@ This chapter provides an overview of the popular JavaScript library \emph{D3} \c
 
 \section{Introduction to D3}
 
-D3 is a JavaScript library that helps developers create highly sophisticated data visualizations on the web via a universal tool that is platform agnostic: the browser. The official documentation of \emph{D3} in \cite{D3Website} explains the library as a toolkit that allows binding data to the DOM. Also, it gives an overview of the vast amount of helpful tools that can be used to visualize data. The library includes all kinds of functionality, ranging from simple array and mathematic operations to complex simulations that are calculated in real time.
+\emph{D3} is a \emph{JavaScript} library that helps developers create highly sophisticated data visualizations on the web via a universal tool that is platform agnostic: the browser. The official documentation of \emph{D3} in \cite{D3Website} explains the library as a toolkit that allows binding data to the DOM. Also, it gives an overview of the vast amount of helpful tools that can be used to visualize data. The library includes all kinds of functionality, ranging from simple array and mathematic operations to complex simulations that are calculated in real time.
 
 One of the most popular features of \emph{D3} is to render user interactable animated charts. Not only is it possible to easily create a bar chart, for instance, but all other kinds of charts as well. A full list of available packages can be found in \cite{D3Github}. The library is prevalent amongst data scientists as it is quite easy to create complex data visualizations in the web quickly.
 
-D3 also provides some other utility functions that can be useful in many use-cases. There is, for example, a module that calculates chromatic colors for charts to get colors that have the maximum diversity to each other to be easily distinguishable as seen in \emph{D3's} documentation\footnote{\url{https://github.com/d3/d3-scale-chromatic}}. Another example of the documentation\footnote{\url{https://github.com/d3/d3-array}} shows that the library also provides some useful array manipulating functions which come in handy when having to deal with big data sets. Also generating random numbers via various distributions is no problem when using the d3-random package\footnote{\url{https://github.com/d3/d3-random}}. The list of useful data manipulation tools goes on, and dealing with every aspect of the library would go far beyond the scope of this paper. 
+\emph{D3} also provides some other utility functions that can be useful in many use-cases. There is, for example, a module that calculates chromatic colors for charts to get colors that have the maximum diversity to each other to be easily distinguishable as seen in \emph{D3's} documentation\footnote{\url{https://github.com/d3/d3-scale-chromatic}}. Another example of the documentation\footnote{\url{https://github.com/d3/d3-array}} shows that the library also provides some useful array manipulating functions which come in handy when having to deal with big data sets. Also generating random numbers via various distributions is no problem when using the d3-random package\footnote{\url{https://github.com/d3/d3-random}}. The list of useful data manipulation tools goes on, and dealing with every aspect of the library would go far beyond the scope of this paper. 
 
 What makes \emph{D3} unique is the possibility to create individual data structures for rendering sophisticated data visualizations. The library provides scatter plots\footnote{\url{https://github.com/d3/d3-scale}} or pie charts, line charts, area charts, radial bar charts, tree maps\footnote{\url{https://github.com/d3/d3-shape}} to name a few. \emph{D3} also provides utility functions to add labels or user interaction to each mentioned and not mentioned data visualization type. Also, a significant advantage of using \emph{D3} is that it also provides simple methods to transform any \emph{D3} visualization into being user interactable by creating floating tooltips or sliders, switches, or knobs, which control the visualization.
 
@@ -31,10 +31,10 @@ There are multiple examples on the documentation's example page in \cite{D3Examp
 
 This section aims to discuss the most vital aspects of the \emph{D3's} API to understand code samples that are presented in later chapters. Some general knowledge of \emph{D3's} API is of utmost importance as the knowledge is crucial for understanding the comparisons of \emph{React} and \emph{D3} in chapter \ref{cha:visualization}. As mentioned before, the \emph{D3} API mostly consists of consecutive chained imperative function calls that manipulate the visualization data and binds it to the DOM. \cite[p.\ 625]{prgLngDesignImpl} describes the imperative programming pattern as a static division of a program into its concurrent tasks which means that the programmer uses statements to change the programs state. 
 
-According to the documentation in \cite{D3Github} the library \emph{D3} was created in 2010. Thus it can be noticed that the API of the library originates from a time, where developers did not even think about using JavaScript in productive or even enterprise environments. Therefore, large codebases written with \emph{D3} tend to be hardly scalable and difficult to maintain. Multiple instruction function calls in program \ref{prog:d3selection} show that \emph{D3} code is indeed imperative. Also, the library makes use of a software pattern called "chaining". The pattern works because each function returns an instance of itself to enable the addition of an infinite amount of functions that can be added to the chain.
+According to the documentation in \cite{D3Github} the library \emph{D3} was created in 2010. Thus it can be noticed that the API of the library originates from a time, where developers did not even think about using \emph{JavaScript} in productive or even enterprise environments. Therefore, large codebases written with \emph{D3} tend to be hardly scalable and difficult to maintain. Multiple instruction function calls in program \ref{prog:d3selection} show that \emph{D3} code is indeed imperative. Also, the library makes use of a software pattern called "chaining". The pattern works because each function returns an instance of itself to enable the addition of an infinite amount of functions that can be added to the chain.
 
 \begin{program}
-\caption{D3 selection, enter, and exit example.}
+\caption{\emph{D3} selection, enter, and exit example.}
 \label{prog:d3selection}
 \begin{JsCode}
 // earlier in the script
@@ -66,7 +66,7 @@ node = node
 \end{program}
 
 \begin{program}
-\caption{Negative example of how confusing and unmaintainable D3 code can become.}
+\caption{Negative example of how confusing and unmaintainable \emph{D3} code can become.}
 \label{prog:d3confusing}
 \begin{JsCode}
 d3.select(_this).classed('active', true)
@@ -108,7 +108,7 @@ d3.select(_this)
 \end{JsCode}
 \end{program}
 
-Selecting DOM nodes and creating a \emph{D3} selection model is a vital aspect of \emph{D3's} API. Via selection \emph{D3} can connect JavaScript application data to actual DOM nodes as \cite{D3Github} shows. An example can be seen in the code example in program \ref{prog:d3selection}. Because the library is imperative each node that is added or removed is handled via a chained function call as the append function in program \ref{prog:d3selection} shows very well. When adding or removing multiple DOM nodes and the individual nodes of the simulation are complicated DOM structures, the code quickly gets very incomprehensive as demonstrated in program \ref{prog:d3confusing}. The provided code example in program \ref{prog:d3selection} only appends a single circle element, for instance, in comparison to the much more complicated program example in \ref{prog:d3confusing}. 
+Selecting DOM nodes and creating a \emph{D3} selection model is a vital aspect of \emph{D3's} API. Via selection \emph{D3} can connect \emph{JavaScript} application data to actual DOM nodes as \cite{D3Github} shows. An example can be seen in the code example in program \ref{prog:d3selection}. Because the library is imperative each node that is added or removed is handled via a chained function call as the append function in program \ref{prog:d3selection} shows very well. When adding or removing multiple DOM nodes and the individual nodes of the simulation are complicated DOM structures, the code quickly gets very incomprehensive as demonstrated in program \ref{prog:d3confusing}. The provided code example in program \ref{prog:d3selection} only appends a single circle element, for instance, in comparison to the much more complicated program example in \ref{prog:d3confusing}. 
 
 Not only is it possible to select DOM nodes via \emph{D3} but the library also contains the feature of selecting, entering, and exiting nodes as lines 9 and 21 showcase in the code snippet in program \ref{prog:d3selection}. The enter and exit selection function calls can be used to explicitly handle nodes that enter and exit the visualiization according to the data that is bound to the DOM. The chained function calls can then handle the enter and exit selections accordingly. Line 21 in program \ref{prog:d3selection} shows an enter selection which appends a circle SVG element for each new data object and also applies various attributes and a style.
 
@@ -138,7 +138,7 @@ Over the years better software patterns emerged and experience shows that chaini
 \begin{figure}
   \centering
   \includegraphics[width=0.6\columnwidth]{force002.PNG}
-  \caption{A sample force graph with more than one center force. Having more than one force centers means that different nodes are attracted to their assigned center force.}
+  \caption{A sample force graph with more than one center force. Having multiple force centers causes each node to be attracted to their assigned center force.}
   \label{fig:force002}
 \end{figure}
 
@@ -151,7 +151,7 @@ As previously mentioned, all force simulations are calculated, animated, and ren
 \begin{figure}
   \centering
   \includegraphics[width=0.4\columnwidth]{forceOwn002.PNG}
-  \caption{A sample force graph where the top node is dragged up to the left and the other nodes are dragged along. The force is still keeping the other nodes apart and also drawn to the center though.}
+  \caption{A sample force graph where the top node is dragged up to the left and the other nodes are dragged along. The force keeps the other nodes apart but also draws them to the center.}
   \label{fig:force003}
 \end{figure}
 
@@ -162,10 +162,10 @@ As previously mentioned, all force simulations are calculated, animated, and ren
   \label{fig:force004}
 \end{figure}
 
-D3 provides a somewhat simplified API to be able to quickly implement force graphs\footnote{\url{https://github.com/d3/d3-force/blob/master/README.md}} in the browser. The way force simulations work is that developers first have to define or build the simulation. There is a factory method as seen in line 1 of program \ref{prog:simulation} which takes the nodes of the graph as an argument and builds a default simulation. The nodes have to be provided in a particular scheme so \emph{D3} can correctly parse the node array. 
+\emph{D3} provides a somewhat simplified API to be able to quickly implement force graphs\footnote{\url{https://github.com/d3/d3-force/blob/master/README.md}} in the browser. The way force simulations work is that developers first have to define or build the simulation. There is a factory method as seen in line 1 of program \ref{prog:simulation} which takes the nodes of the graph as an argument and builds a default simulation. The nodes have to be provided in a particular scheme so \emph{D3} can correctly parse the node array. 
 
 \begin{program}
-\caption{Code snippets for D3 force simulation code}
+\caption{Code snippets for \emph{D3} force simulation code}
 \label{prog:simulation}
 \begin{JsCode}
 simulation.forceSimulation([nodes]) // factory method for a standard force simulation
@@ -179,7 +179,7 @@ simulation.alphaTarget([alphaTarget]) // sets alpha target value
 \end{program}
 
 \begin{program}
-\caption{Sample initialization of a D3 force graph}
+\caption{Sample initialization of a \emph{D3} force graph}
 \label{prog:d3forceinit}
 \begin{JsCode}
 const simulation = forceSimulation(data)
@@ -204,7 +204,7 @@ Another very important aspect of force graphs is the so called "alpha" value sys
 If there is a user interaction, the simulation sometimes has to be restarted or reheated. Programmers can set alpha values and targets to reheat or restart the simulation in case a node is dragged by the user which would possibly require many other nodes in the simulation to react to that user input. That way also the speed of the simulation can be controlled via setting a custom decay function. \emph{D3's} documentation about force simulations\footnote{\url{https://github.com/d3/d3-force}} points to a few methods that can achieve said functionality. The functions on line 3, 4, and 5 of program \ref{prog:simulation} can be used to reheat a simulation. Also the functions in line 6 and 7 of program \ref{prog:simulation} can be used to set values directly to alter the simulation's life span.
 
 \begin{program}
-\caption{D3 written in a fictional functional way}
+\caption{\emph{D3} written in a fictional functional way}
 \label{prog:d3functional}
 \begin{JsCode}
 const forceParams = compose(

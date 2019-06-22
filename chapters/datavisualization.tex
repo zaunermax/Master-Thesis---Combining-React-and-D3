@@ -25,7 +25,7 @@ Of course, since all three prototypes work fundamentally different, some custom 
 Each prototype implements the same API interface and receives its data via props. All visualization data and each setting parameter, therefore, has to be passed to the prototype component via \emph{React} component props. Using props also means that the data and the settings must be updateable. The parent container which renders a prototype component must be able to update the prototype's data by just passing different props. The newly applied props, as a consequence, have to be handled correctly in each prototype individually.
 
 \begin{program}[H]
-\caption{Simple example of a React component and its usage.} 
+\caption{Simple example of a \emph{React} component and its usage.} 
 \label{prog:forceBuildModule}
 \begin{JsCode}
 const applyForceHandlers = pipeAppliers( /+\label{line:composition1}+/
@@ -94,16 +94,16 @@ This section introduces the reader to the prototypes of the thesis project. It a
 \begin{figure}
 \centering
 \includegraphics[scale=.6, trim= 4cm 0 4cm 0, clip, width=0.85\columnwidth]{impl001.pdf}
-\caption{Pure D3 force graph life cycle visualization.}
+\caption{Pure \emph{D3} force graph life cycle visualization.}
 \label{fig:pureD3Lifecycle}
 \end{figure}
 
-The first prototype of the project was developed from an experimental implementation. The sole reason it was realized was to test if it is even possible to combine \emph{React} and \emph{D3} but still maintaining React's philosophy of unidirectional dataflow and idempotent render function components. The main goal, therefore, was to create a prototype that would always correctly update itself and thus visualize current data props each render cycle. If the parent component updated the visualization component's data or options, the prototype would have to reflect the changes as well instantly. The main difficulty with this prototype is to combine React's declarative approach with \emph{D3's} imperative way of rendering data.
+The first prototype of the project was developed from an experimental implementation. The sole reason it was realized was to test if it is even possible to combine \emph{React} and \emph{D3} but still maintaining \emph{React's} philosophy of unidirectional dataflow and idempotent render function components. The main goal, therefore, was to create a prototype that would always correctly update itself and thus visualize current data props each render cycle. If the parent component updated the visualization component's data or options, the prototype would have to reflect the changes as well instantly. The main difficulty with this prototype is to combine \emph{React's} declarative approach with \emph{D3's} imperative way of rendering data.
 
-The implementation heavily relies on the fact that React's reconciliation algorithm omits updates to the DOM if the same element is rendered consecutively. The pure \emph{D3} graph component only renders a static base SVG, as shown in the code snippet in program \ref{prog:pureD3render}. After the component mounts, \emph{D3} hooks into the base SVG component via the provided ID and builds its force simulation on top. \emph{D3} also appends and removes the DOM nodes according to the data that was passed to \emph{D3}. Figure \ref{fig:pureD3Lifecycle} demonstrates via color coding how \emph{React} only renders the SVG element and \emph{D3} renders the simulation via the tick function.
+The implementation heavily relies on the fact that \emph{React's} reconciliation algorithm omits updates to the DOM if the same element is rendered consecutively. The pure \emph{D3} graph component only renders a static base SVG, as shown in the code snippet in program \ref{prog:pureD3render}. After the component mounts, \emph{D3} hooks into the base SVG component via the provided ID and builds its force simulation on top. \emph{D3} also appends and removes the DOM nodes according to the data that was passed to \emph{D3}. Figure \ref{fig:pureD3Lifecycle} demonstrates via color coding how \emph{React} only renders the SVG element and \emph{D3} renders the simulation via the tick function.
 
 \begin{program}
-\caption{Render function of the pure D3 prototype.}
+\caption{Render function of the pure \emph{D3} prototype.}
 \label{prog:pureD3render}
 \begin{JsCode}
 render() {
@@ -113,9 +113,9 @@ render() {
 \end{JsCode}
 \end{program}
 
-As a result, React's reconciliation algorithm does not handle nodes that are inside the \emph{D3} force simulation if the data changes. The component only renders a static SVG element that is not updated. Because the SVG element is static, React's reconciliation algorithm does not commit anything to the DOM since every time the render function is called the SVG tag stays the same. Instead, \emph{D3} entirely takes over the DOM manipulation and adequately handles the simulation by itself without \emph{React} interfering in any way.
+As a result, \emph{React's} reconciliation algorithm does not handle nodes that are inside the \emph{D3} force simulation if the data changes. The component only renders a static SVG element that is not updated. Because the SVG element is static, \emph{React's} reconciliation algorithm does not commit anything to the DOM since every time the render function is called the SVG tag stays the same. Instead, \emph{D3} entirely takes over the DOM manipulation and adequately handles the simulation by itself without \emph{React} interfering in any way.
 
-Every time the data updates, the new data is provided directly to \emph{D3} via the life cycle method \texttt{componentDidUpdate()} as figure \ref{fig:pureD3Lifecycle} shows. Of course, each data update causes \emph{React} to render the base SVG component, but, due to the virtual DOM implementation of \emph{React}, the SVG is never newly rendered, as it is static. A static component is a \emph{React} node that does not contain any dynamic content and is therefore never updated by the reconciliation phase. React's reconciliation algorithm prevents the browser from newly committing the SVG tag to the DOM. \emph{D3}, therefore, works completely separate from \emph{React}. \emph{D3}, on the other hand, can be implemented like on any other web project as well. Developers not only have to implement the initial force graph generation functionality but also the update logic that handles the updated data and applies it to the force graph simulation.
+Every time the data updates, the new data is provided directly to \emph{D3} via the life cycle method \texttt{componentDidUpdate()} as figure \ref{fig:pureD3Lifecycle} shows. Of course, each data update causes \emph{React} to render the base SVG component, but, due to the virtual DOM implementation of \emph{React}, the SVG is never newly rendered, as it is static. A static component is a \emph{React} node that does not contain any dynamic content and is therefore never updated by the reconciliation phase. \emph{React's} reconciliation algorithm prevents the browser from newly committing the SVG tag to the DOM. \emph{D3}, therefore, works completely separate from \emph{React}. \emph{D3}, on the other hand, can be implemented like on any other web project as well. Developers not only have to implement the initial force graph generation functionality but also the update logic that handles the updated data and applies it to the force graph simulation.
 
 There are two component life cycle methods from \emph{React} that are crucial to this implementation. First, \texttt{componentDidMount()} is used to initialize \emph{D3}, select the base node, and then build the whole force simulation on top as demonstrated in program \ref{fig:pureD3Lifecycle}. It is important to use the life cycle method that triggers \emph{after} the initial commit phase, as it makes sure, the component has already been rendered once for \emph{D3} to being able to select the existing real SVG DOM node. Looking at figure \ref{fig:pureD3Lifecycle} again, it is apparent that the second important life cycle method is \texttt{componentDidUpdate()} which provides the latest most up to date data directly to \emph{D3}. That way \emph{D3} can then handle the update in the force graph.
 
@@ -124,7 +124,7 @@ There are two component life cycle methods from \emph{React} that are crucial to
 Once the component is initialized, the \texttt{componentDidMount()} life cycle method directly calls the initializer function which can be seen on line \ref{line:initGraphFn} in the code snippet in program \ref{prog:pureD3InitFn}. The initializing function appends the base \texttt{<g>} tag and also handles the translation of the current height and width of the component. Then the \texttt{buildForceSimulation()} function is called with the current options and parameters in order to get the simulation and the correct updater function. Note how the simulation type is passed to the builder function as well. The resulting simulation and updater function is then saved in the current component.
 
 \begin{program}
-\caption{Pure D3 force graph initializing function.}
+\caption{Pure \emph{D3} force graph initializing function.}
 \label{prog:pureD3InitFn}
 \begin{JsCode}
 initGraph = () => { /+\label{line:initGraphFn}+/
@@ -149,12 +149,12 @@ initGraph = () => { /+\label{line:initGraphFn}+/
 \end{JsCode}
 \end{program}
 
-What is also worth mentioning is the fact that the simulation and the updating function are saved directly to the \texttt{this} context as seen in lines \ref{line:thisContext1} and \ref{line:thisContext2} of the code snippet in program \ref{prog:pureD3InitFn}. As stateful components are just plain JavaScript classes, they are capable of having member variables as well. It is of utmost importance not to confuse member variables with React's component state, as \emph{React} is agnostic to class member variables. \emph{React} not noticing the member variables is a wanted effect in this case, as the simulation and the updater function have to be saved in the component without \emph{React} going through a new render cycle. 
+What is also worth mentioning is the fact that the simulation and the updating function are saved directly to the \texttt{this} context as seen in lines \ref{line:thisContext1} and \ref{line:thisContext2} of the code snippet in program \ref{prog:pureD3InitFn}. As stateful components are just plain \emph{JavaScript} classes, they are capable of having member variables as well. It is of utmost importance not to confuse member variables with \emph{React's} component state, as \emph{React} is agnostic to class member variables. \emph{React} not noticing the member variables is a wanted effect in this case, as the simulation and the updater function have to be saved in the component without \emph{React} going through a new render cycle. 
 
 Looking at the code in program \ref{prog:pureD3updateApply}, the update applying functionality can be seen very well. If given a current simulation object, the function handles all newly entering, transitioning, and exiting nodes accordingly. Even an animation is applied. Each time, the pure \emph{D3} \emph{React} component has goes through the \texttt{componentDidUpdate()} function, the \texttt{applyNodeUpdateCycle()} function is called as well. The force simulation building module can take in the updater function from the example in program \ref{prog:pureD3updateApply} and composes it directly into the updating function as seen in line \ref{line:applyPureD3Selection} in program \ref{prog:forceBuildModule}.
 
 \begin{program}[th]
-\caption{Function that applies the data update to D3 on data changes.}
+\caption{Function that applies the data update to \emph{D3} on data changes.}
 \label{prog:pureD3updateApply}
 \begin{JsCode}
 applyNodeUpdateCycle = (simulation) => {
@@ -195,7 +195,7 @@ applyNodeUpdateCycle = (simulation) => {
 Another vital function of the pure \emph{D3} force graph is the tick handler that can be seen in the code snippet in program \ref{prog:pureD3Tick}. The ticking function also gets passed to the force simulation builder function. Each iteration of \emph{D3's} simulation tick the function then updates the position of all nodes and links in the simulation.
 
 \begin{program}[th]
-\caption{Tick handling function of the pure D3 prototype.}
+\caption{Tick handling function of the pure \emph{D3} prototype.}
 \label{prog:pureD3Tick}
 \begin{JsCode}
 ticked = () => {
@@ -225,7 +225,7 @@ The most significant disadvantage with the pure \emph{D3} implementation is the 
 \begin{figure}
 \centering
 \includegraphics[scale=.6, trim= 4cm 0 2cm 0, clip, width=0.85\columnwidth]{impl002.pdf}
-\caption{Pure React force graph life cycle visualization.}
+\caption{Pure \emph{React} force graph life cycle visualization.}
 \label{fig:pureReactLifecycle}
 \end{figure}
 
@@ -233,7 +233,7 @@ The pure \emph{React} force graph implementation is far more complicated than th
 
 As figure \ref{fig:pureReactLifecycle} shows, the complete presentation layer is handled by \emph{React} itself. The whole SVG component tree is therefore completely rendered by \emph{React}. The figure also demonstrates how the data is handled not only in the component's constructor but also in its \texttt{shouldComponentUpdate()} life cycle method. As mentioned in the previous chapter \ref{cha:react}, the constructor is the first life cycle method that is executed in any \emph{React} component. The pure \emph{React} prototype takes advantage of that fact and initializes the complete \emph{D3} force simulation before any data is rendered. The \texttt{shouldComponentUpdate()} life cycle is used to determine if the component's props have changed and possibly apply an update to the \emph{D3} force simulation.
 
-The key to the integration of \emph{D3} into React's render cycle is the tick function on the \emph{D3} force simulation. Every time the tick function is executed, the applied tick handler then queries the force simulation data, fetches all link and node positions, calculates the current position and then pass the newly calculated data to the \emph{React} component again via a \texttt{setState()} call. Figure \ref{fig:pureReactLifecycle} demonstrates how the data flows back into the component again after each tick cycle of the force simulation.
+The key to the integration of \emph{D3} into \emph{React's} render cycle is the tick function on the \emph{D3} force simulation. Every time the tick function is executed, the applied tick handler then queries the force simulation data, fetches all link and node positions, calculates the current position and then pass the newly calculated data to the \emph{React} component again via a \texttt{setState()} call. Figure \ref{fig:pureReactLifecycle} demonstrates how the data flows back into the component again after each tick cycle of the force simulation.
 
 Keeping all node and link positions in the \emph{React} component state, as a result, unlocks full control to the presentation layer. Thus, \emph{React} acting as a function of state can completely handle each element in the force simulation. The component state includes not only appearance properties like background or stroke color but also exact node and link positions. As a consequence, the data has to pass the complete rendering cycle of \emph{React} on every tick execution, including the reconciliation phase, which can lead to poor rendering performance. Not only does it take time for \emph{D3} to calculate a new version of the force data each tick, but also \emph{React} then has to process the whole new data tree. If the simulation contains a high number of nodes, the whole rendering process, which figure \ref{fig:pureReactLifecycle} shows, can massively impact performance as described later in chapter \ref{cha:performance}.
 
@@ -246,7 +246,7 @@ The initialization of the pure \emph{React} force graph pretty much looks the sa
 Due to the fact that the pure \emph{React} force graph component provides the complete dataset about all nodes and links in the simulation, the render function can be 100\% declarative code as seen in the code example in program \ref{prog:pureReactRender}. The link and node properties which contain presentational data like the size of a node or the color of a link come from the component's props, as they are passed in from the parent container. However, the link and node positions come from the components internal state. The example code in program \ref{prog:pureReactRender} shows very well, how the nodes and links components have direct access to the link and node positions. Figure \ref{fig:pureReactLifecycle} also shows how the \emph{React} components handle all the SVG properties.
 
 \begin{program}
-\caption{Render life cycle method of the pure React force graph prototype.}
+\caption{Render life cycle method of the pure \emph{React} force graph prototype.}
 \label{prog:pureReactRender}
 \begin{JsCode}
 render() {
@@ -269,10 +269,10 @@ render() {
 
 Another vital aspect of the pure \emph{React} force graph's implementation is the update handling mechanism. Due to the fact that the component is updated on every free animation frame of the browser, it is of utmost importance to only update the component if necessary. The \texttt{shouldComponentUpdate()} function in the code snippet in program \ref{prog:pureReactSimulationUpdate} shows that not only internal state but also the props are checked, if they have updated. Only if the props provided by the parent have changed, the component calls the force simulation updater function which it obtained via the \texttt{buildForceSimulation()} call in the constructor. The component should update though if either its props or its state has changed. If the props have changed, the simulation updater function makes sure that the force simulation calculates the data for the new nodes and links. By doing so, the next render call can already process the new node and link positions.
 
-Unfortunately calling the \texttt{handleSimulationUpdate()} function inside React's life cycle method \texttt{should\linebreak[0]{}Component\linebreak[0]{}Update()} is considered an anti-pattern according to Facebooks article\footnote{\url{https://reactjs.org/docs/react-component.html}}, as side-effects should always be handled inside the \texttt{component\linebreak[0]{}Did\linebreak[0]{}Update()} life cycle method. The force simulation updater function is a so-called "side effect". Facebook strongly advises against using any side effects in the \texttt{should\linebreak[0]{}Component\linebreak[0]{}Update()} life cycle method, as it should be as fast and efficient as possible to prevent possible render cycles. In the case of the pure \emph{React} force component calling the simulation updater function is fine though, as the side-effect is not called on every state update, but only if the component's props change. Props only change, if the parent component passes different props, which does not happen that often. The internal component state, on the other hand, updates multiple times per second and preventing the simulation update function call on every state change is crucially important for good rendering performance.
+Unfortunately calling the \texttt{handleSimulationUpdate()} function inside \emph{React's} life cycle method \texttt{should\linebreak[0]{}Component\linebreak[0]{}Update()} is considered an anti-pattern according to Facebooks article\footnote{\url{https://reactjs.org/docs/react-component.html}}, as side-effects should always be handled inside the \texttt{component\linebreak[0]{}Did\linebreak[0]{}Update()} life cycle method. The force simulation updater function is a so-called "side effect". Facebook strongly advises against using any side effects in the \texttt{should\linebreak[0]{}Component\linebreak[0]{}Update()} life cycle method, as it should be as fast and efficient as possible to prevent possible render cycles. In the case of the pure \emph{React} force component calling the simulation updater function is fine though, as the side-effect is not called on every state update, but only if the component's props change. Props only change, if the parent component passes different props, which does not happen that often. The internal component state, on the other hand, updates multiple times per second and preventing the simulation update function call on every state change is crucially important for good rendering performance.
 
 \begin{program}
-\caption{Update method of the pure React force graph prototype.}
+\caption{Update method of the pure \emph{React} force graph prototype.}
 \label{prog:pureReactSimulationUpdate}
 \begin{JsCode}
 shouldComponentUpdate(nextProps, nextState) => {
@@ -285,12 +285,12 @@ shouldComponentUpdate(nextProps, nextState) => {
 \end{JsCode}
 \end{program}
 
-Another interesting aspect of the pure \emph{React} prototype implementation is the fact that the tick handler function does not manipulate the DOM directly as the pure \emph{D3} example does. Instead, the code example in program \ref{prog:pureReactTickHandler} demonstrates how React's \texttt{setState()} component function is called which updates the component's state with the new link and node positions. The functions on lines \ref{line:getLinkPositions} and \ref{line:getNodePositions} take in the current force simulation as a parameter and extract either the node or link positions and return them. As mentioned before, the update function is called as often, as the simulation tick function ticks. 
+Another interesting aspect of the pure \emph{React} prototype implementation is the fact that the tick handler function does not manipulate the DOM directly as the pure \emph{D3} example does. Instead, the code example in program \ref{prog:pureReactTickHandler} demonstrates how \emph{React's} \texttt{setState()} component function is called which updates the component's state with the new link and node positions. The functions on lines \ref{line:getLinkPositions} and \ref{line:getNodePositions} take in the current force simulation as a parameter and extract either the node or link positions and return them. As mentioned before, the update function is called as often, as the simulation tick function ticks. 
 
 Every \texttt{setState()} call updates the component and triggers a new render cycle of the force component. The component update loop goes on until the alpha in the simulation has fully decayed. The \texttt{updatePositions()} call on line \ref{line:updatePositions} in the code snippet in program \ref{prog:pureReactTickHandler} itself is also wrapped inside a \texttt{requestAnimationFrame()} call to ensure a consistent framerate in the browser. The component updater function should only be called if the browser is ready to render a new simulation tick.
 
 \begin{program}
-\caption{Simulation tick handler of the pure React force graph prototype.}
+\caption{Simulation tick handler of the pure \emph{React} force graph prototype.}
 \label{prog:pureReactTickHandler}
 \begin{JsCode}
 updatePositions = () => { /+\label{line:updatePositions}+/
@@ -312,7 +312,7 @@ Rendering the complete force graph via \emph{React} components yields one other 
 
 \subsubsection{Disadvantages}
 
-The most significant advantage sadly is also the biggest disadvantage of the pure \emph{React} force graph. Because the pure \emph{React} prototype not only stores all link positions in the internal component state but also updates it every fraction of a second as a consequence more CPU cycles are lost by calculating not only the \emph{D3} tick cycles but also complete \emph{React} render cycles. Even though sometimes some node and link positions are only changed ever so slightly when the alpha value approaches the minimum value, React's reconciliation algorithm determines an updated DOM node and completely recommit the whole node to the DOM, which, of course, has an impact on performance.
+The most significant advantage sadly is also the biggest disadvantage of the pure \emph{React} force graph. Because the pure \emph{React} prototype not only stores all link positions in the internal component state but also updates it every fraction of a second as a consequence more CPU cycles are lost by calculating not only the \emph{D3} tick cycles but also complete \emph{React} render cycles. Even though sometimes some node and link positions are only changed ever so slightly when the alpha value approaches the minimum value, \emph{React's} reconciliation algorithm determines an updated DOM node and completely recommit the whole node to the DOM, which, of course, has an impact on performance.
 
 Another considerable disadvantage of the pure \emph{React} force graph implementation is that some \emph{D3} functionalities like dragging nodes or zooming in and out of the graph have to be implemented from scratch in pure \emph{React} which can be a tedious task. Due to the component being rendered multiple times a second, implementing well performing drag handlers is a very complicated task, for example.
 
@@ -326,7 +326,7 @@ Another considerable disadvantage of the pure \emph{React} force graph implement
 \begin{figure}
 \centering
 \includegraphics[scale=.6, trim= 4cm 0 4cm 0, clip, width=0.85\columnwidth]{impl003.pdf}
-\caption{Pure React force graph life cycle visualization.}
+\caption{Pure \emph{React} force graph life cycle visualization.}
 \label{fig:reactD3HybridLifeCycle}
 \end{figure}
 
@@ -336,7 +336,7 @@ The way the prototype achieves the previously mentioned functionality is that th
 
 As described in chapter \ref{cha:react}, during the component's render phase the reconciliation algorithm compares newly applied data of the component's state or props with the virtual DOM and then decides which DOM nodes need to be committed to or removed from the DOM. Once the simulation data updates via a prop update from the parent component, some nodes or links, therefore, might be added, changed or could just be removed, if they are non-existent anymore in the new version of the applied data.
 
-The most important aspect of the hybrid prototype is that \emph{D3} selects already existing DOM nodes and connects them to the current force simulation data. Since the selection process is executed in React's commit phase, \emph{D3} can read the up to date version of the DOM. As described in chapter \ref{cha:react}, reading or manipulating the DOM in the commit phase guarantees the DOM to be a representation of the component's current state and data. Therefore \emph{D3's} selection happens \emph{after} the render phase to always apply its selection to the most recent version of the DOM. Again, figure \ref{fig:reactLifecycleMethods} visualizes all of React's life cycle phases.
+The most important aspect of the hybrid prototype is that \emph{D3} selects already existing DOM nodes and connects them to the current force simulation data. Since the selection process is executed in \emph{React's} commit phase, \emph{D3} can read the up to date version of the DOM. As described in chapter \ref{cha:react}, reading or manipulating the DOM in the commit phase guarantees the DOM to be a representation of the component's current state and data. Therefore \emph{D3's} selection happens \emph{after} the render phase to always apply its selection to the most recent version of the DOM. Again, figure \ref{fig:reactLifecycleMethods} visualizes all of \emph{React's} life cycle phases.
 
 \subsubsection{Implementation Details}
 
@@ -406,7 +406,7 @@ Looking at the figures \ref{fig:pureD3Lifecycle}, \ref{fig:pureReactLifecycle}, 
 \begin{figure}
   \centering
   \includegraphics[width=0.89\columnwidth]{reactd3story}
-  \caption{React Storybook currently showing the hybrid prototype.}
+  \caption{\emph{React} Storybook currently showing the hybrid prototype.}
   \label{fig:reactD3stroy}
 \end{figure}
 
