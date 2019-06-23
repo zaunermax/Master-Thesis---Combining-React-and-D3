@@ -33,17 +33,17 @@ Being able to make the render functions pluggable is also a significant advantag
 
 \section{Performance Results}
 
-This thesis aims to find a well-performing combination of \emph{React} and \emph{D3}. The research question "Can \emph{React} be combined with \emph{D3} without losing performance in the browser" unfortunately has to be answered with "\emph{React} can be combined with \emph{D3}, but there are some slight render performance losses". The results of the performance benchmarks clearly show how the newly invented hybrid component is always ahead of Uber's take on combining the two libraries. 
+This thesis aims to find a well-performing combination of \emph{React} and \emph{D3}. The research question "Can \emph{React} be combined with \emph{D3} without losing performance in the browser" unfortunately has to be answered with "\emph{React} can be combined with \emph{D3}, but there are some slight render performance losses". The results of the performance benchmarks clearly show how the newly invented hybrid component is always ahead of \emph{Uber's} take on combining the two libraries. 
 
 However, when looking at the performance numbers, research shows that every prototype can be used on high-end devices without notable performance issues. The low-end devices suffer from low calculation speeds and low monitor refresh rates in general. Even though the hybrid prototype is ahead of the pure \emph{React} component when measuring the raw performance, it is clear though that the performance differences are hardly measurable without knowing the exact numbers.
 
 \section{Open Source}
 
-Because the hybrid prototype is easily extensible with not only \emph{D3} but also \emph{React} functionality, the decision was made to open-source the component. The \emph{React} community lives off of free to use components that can be integrated into any project free of charge. The hybrid component was developed out of necessity for a better solution of combining \emph{React} and \emph{D3}, and maybe other developers find it useful as well.
+Because the hybrid prototype is easily extensible with not only \emph{D3} but also \emph{React} functionality, the decision was made to open source the component. The \emph{React} community lives off of free to use components that can be integrated into any project free of charge. The hybrid component was developed out of necessity for a better solution of combining \emph{React} and \emph{D3}, and maybe other developers find it useful as well.
 
 \section{Final Thoughts}
 
-Even though the performance numbers could have been better, the project is considered a success nevertheless due to the fact that the hybrid prototype's performance is not only on par or even superior to Uber's pure \emph{React} variant. The performance is worse than a native \emph{D3} implementation, but that is to be expected when two big libraries are combined. The hybrid's component API also turned out to be very useful as the storybook examples demonstrate. Being able to not only use the power of \emph{D3} but also to write almost pure declarative \emph{React} code to implement a force simulation is definitely considered a success.
+Even though the performance numbers could have been better, the project is considered a success nevertheless due to the fact that the hybrid prototype's performance is not only on par or even superior to \emph{Uber's} pure \emph{React} variant. The performance is worse than a native \emph{D3} implementation, but that is to be expected when two big libraries are combined. The hybrid's component API also turned out to be very useful as the storybook examples demonstrate. Being able to not only use the power of \emph{D3} but also to write almost pure declarative \emph{React} code to implement a force simulation is definitely considered a success.
 
 
 % all in all big success, as i found an implementation that combines d3 and react and is super performant. Also open sourcing the thing is really cool as other developers can benefit from using the force component by coding their nodes in react as well.
