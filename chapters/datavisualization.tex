@@ -24,7 +24,7 @@ Of course, since all three prototypes work fundamentally different, some custom 
 
 Each prototype implements the same API interface and receives its data via props. All visualization data and every setting parameter, therefore, has to be passed to the prototype component via \emph{React} component props. Using props also means that the data and the settings must be updateable. The parent container which renders a prototype component must be able to update the prototype's data by just passing different props. The newly applied props, as a consequence, have to be handled correctly in each prototype individually.
 
-\begin{program}[H]
+\begin{program}
 \caption{Simple example of a \emph{React} component and its usage.} 
 \label{prog:forceBuildModule}
 \begin{JsCode}
