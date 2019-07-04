@@ -12,18 +12,6 @@ The obvious question "Why do I even need a combination of \emph{React} and \emph
 \section{Project Setup}
 \label{sub:projectSetup}
 
-To be able to test multiple prototypes, one crucial aspect of the project is the force simulation builder setup. All prototypes are based on the simulation builder module which contains a few \emph{D3} specific methods that allow developers to construct their own individual force simulation variants. The prototypes can reuse some of the already composed methods, and some new custom methods can be implemented as well.
-
-By implementing a force simulation builder module, it is possible to ensure that all prototype \emph{D3} simulations are initialized and updated the same way. The most interesting code snippet of the module can be seen in program~\ref{prog:forceBuildModule}. Individual building blocks of the simulation can be piped together because the module uses a functional approach. Lines~\ref{line:updater1},~\ref{line:updater2} and~\ref{line:updater3} show how the updater functions for the three prototypes are composed together by using smaller force simulation function blocks.
-
-The \texttt{buildForceSimulation()} method in line~\ref{line:buildForceSimulationFn} in program~\ref{prog:forceBuildModule} is the most important function in the module. The options parameter has to contain a type, which is used to determine what updater function is applied to the force simulation. The functional switch case statement on line \ref{line:getUpdaterFunction} in program~\ref{prog:forceBuildModule} decides based on the type which updater function to return. The builder function returns an instance of a \emph{D3} force simulation and the associated updater function that can be used by each prototype to update the simulation every time the data changes.
-
-Another interesting aspect of the code snippet in program~\ref{prog:forceBuildModule} is that the functional compositions can be nested. Lines~\ref{line:composition1} and~\ref{line:composition2} show the composition of two functions that in turn can then be composed with all three force simulation variants. Even though they are piped together, the result can then be piped again into every updater function composition as shown in lines~\ref{line:applyForce1},~\ref{line:applyForce2}, and~\ref{line:applyForce3}, for example, where the composed method \texttt{applyForceHandlers} is piped into the updater functions of the different prototypes. Again, the way the updater function composition is implemented ensures the equality of the force simulation initialization of all three prototypes.
-
-Of course, since all three prototypes work fundamentally different, some custom apply functions have to be implemented to ensure the functionality of all three prototypes. Applying the custom functions is no problem, as all updater functions are functional compositions. If some custom method has to be added, it can just be applied to the function composition of the associated prototype. Line~\ref{line:applyNewRefs} in program~\ref{prog:forceBuildModule} shows how a custom node reference applying function is composed into the updater function.
-
-Each prototype implements the same API interface and receives its data via props. All visualization data and every setting parameter, therefore, has to be passed to the prototype component via \emph{React} component props. Using props also means that the data and the settings must be updateable. The parent container which renders a prototype component must be able to update the prototype's data by just passing different props. The newly applied props, as a consequence, have to be handled correctly in each prototype individually.
-
 \begin{program}
 \caption{Simple example of a \emph{React} component and its usage.} 
 \label{prog:forceBuildModule}
@@ -77,6 +65,20 @@ export const buildForceSimulation = (options) => { /+\label{line:buildForceSimul
 }
 \end{JsCode}
 \end{program}
+
+\afterpage{\clearpage}
+
+To be able to test multiple prototypes, one crucial aspect of the project is the force simulation builder setup. All prototypes are based on the simulation builder module which contains a few \emph{D3} specific methods that allow developers to construct their own individual force simulation variants. The prototypes can reuse some of the already composed methods, and some new custom methods can be implemented as well.
+
+By implementing a force simulation builder module, it is possible to ensure that all prototype \emph{D3} simulations are initialized and updated the same way. The most interesting code snippet of the module can be seen in program~\ref{prog:forceBuildModule}. Individual building blocks of the simulation can be piped together because the module uses a functional approach. Lines~\ref{line:updater1},~\ref{line:updater2} and~\ref{line:updater3} show how the updater functions for the three prototypes are composed together by using smaller force simulation function blocks.
+
+The \texttt{buildForceSimulation()} method in line~\ref{line:buildForceSimulationFn} in program~\ref{prog:forceBuildModule} is the most important function in the module. The options parameter has to contain a type, which is used to determine what updater function is applied to the force simulation. The functional switch case statement on line \ref{line:getUpdaterFunction} in program~\ref{prog:forceBuildModule} decides based on the type which updater function to return. The builder function returns an instance of a \emph{D3} force simulation and the associated updater function that can be used by each prototype to update the simulation every time the data changes.
+
+Another interesting aspect of the code snippet in program~\ref{prog:forceBuildModule} is that the functional compositions can be nested. Lines~\ref{line:composition1} and~\ref{line:composition2} show the composition of two functions that in turn can then be composed with all three force simulation variants. Even though they are piped together, the result can then be piped again into every updater function composition as shown in lines~\ref{line:applyForce1},~\ref{line:applyForce2}, and~\ref{line:applyForce3}, for example, where the composed method \texttt{applyForceHandlers} is piped into the updater functions of the different prototypes. Again, the way the updater function composition is implemented ensures the equality of the force simulation initialization of all three prototypes.
+
+Of course, since all three prototypes work fundamentally different, some custom apply functions have to be implemented to ensure the functionality of all three prototypes. Applying the custom functions is no problem, as all updater functions are functional compositions. If some custom method has to be added, it can just be applied to the function composition of the associated prototype. Line~\ref{line:applyNewRefs} in program~\ref{prog:forceBuildModule} shows how a custom node reference applying function is composed into the updater function.
+
+Each prototype implements the same API interface and receives its data via props. All visualization data and every setting parameter, therefore, has to be passed to the prototype component via \emph{React} component props. Using props also means that the data and the settings must be updateable. The parent container which renders a prototype component must be able to update the prototype's data by just passing different props. The newly applied props, as a consequence, have to be handled correctly in each prototype individually.
 
 %% DATA ENCAPSULATION %%
 
